@@ -5,10 +5,11 @@
 @section('content')
 <!-- Page Header -->
 <section class="page-header">
-    <div class="container">
-        <h1 data-aos="fade-up">Contact Us</h1>
-        <nav aria-label="breadcrumb" data-aos="fade-up" data-aos-delay="100">
-            <ol class="breadcrumb justify-content-center">
+    <div class="container" data-aos="fade-up">
+        <span class="section-tag" style="color: var(--primary-color);">Get In Touch</span>
+        <h1>Contact Us</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('frontend.home') }}">Home</a></li>
                 <li class="breadcrumb-item active">Contact</li>
             </ol>
@@ -87,49 +88,43 @@
             <!-- Contact Info -->
             <div class="col-lg-4">
                 <div class="contact-info-card mb-4" data-aos="fade-left">
-                    <h4><i class="fas fa-map-marker-alt text-primary me-2"></i>Our Office</h4>
-                    <p class="mb-0">{{ $settings['business_address'] ?? '123 Main Street, Hobart TAS 7000' }}</p>
+                    <h5 class="fw-800 mb-3"><i class="fas fa-map-marker-alt text-primary me-2"></i>Our Office</h5>
+                    <p class="text-muted mb-0">{{ $settings['business_address'] ?? 'Hobart, Tasmania' }}</p>
                 </div>
 
                 <div class="contact-info-card mb-4" data-aos="fade-left" data-aos-delay="100">
-                    <h4><i class="fas fa-phone text-primary me-2"></i>Phone</h4>
+                    <h5 class="fw-800 mb-3"><i class="fas fa-phone text-primary me-2"></i>Phone</h5>
                     <p class="mb-0">
-                        <a href="tel:{{ $settings['contact_phone'] ?? '0400000000' }}">
+                        <a href="tel:{{ $settings['contact_phone'] ?? '0400000000' }}" class="fw-bold text-decoration-none" style="color: var(--secondary-color);">
                             {{ $settings['contact_phone'] ?? '0400 000 000' }}
                         </a>
                     </p>
                 </div>
 
                 <div class="contact-info-card mb-4" data-aos="fade-left" data-aos-delay="200">
-                    <h4><i class="fas fa-envelope text-primary me-2"></i>Email</h4>
+                    <h5 class="fw-800 mb-3"><i class="fas fa-envelope text-primary me-2"></i>Email</h5>
                     <p class="mb-0">
-                        <a href="mailto:{{ $settings['contact_email'] ?? 'info@vipdrivingschool.com.au' }}">
+                        <a href="mailto:{{ $settings['contact_email'] ?? 'info@vipdrivingschool.com.au' }}" class="fw-bold text-decoration-none" style="color: var(--secondary-color);">
                             {{ $settings['contact_email'] ?? 'info@vipdrivingschool.com.au' }}
                         </a>
                     </p>
                 </div>
 
                 <div class="contact-info-card mb-4" data-aos="fade-left" data-aos-delay="300">
-                    <h4><i class="fas fa-clock text-primary me-2"></i>Business Hours</h4>
-                    <ul class="list-unstyled mb-0">
-                        <li>Monday - Friday: 8:00 AM - 6:00 PM</li>
-                        <li>Saturday: 8:00 AM - 4:00 PM</li>
-                        <li>Sunday: Closed</li>
+                    <h5 class="fw-800 mb-3"><i class="fas fa-clock text-primary me-2"></i>Business Hours</h5>
+                    <ul class="list-unstyled mb-0 text-muted">
+                        <li class="mb-1 d-flex justify-content-between"><span>Mon - Fri:</span> <span>8:00 AM - 6:00 PM</span></li>
+                        <li class="mb-1 d-flex justify-content-between"><span>Saturday:</span> <span>8:00 AM - 4:00 PM</span></li>
+                        <li class="d-flex justify-content-between"><span>Sunday:</span> <span>Closed</span></li>
                     </ul>
                 </div>
 
                 <div class="contact-info-card" data-aos="fade-left" data-aos-delay="400">
-                    <h4><i class="fas fa-share-alt text-primary me-2"></i>Follow Us</h4>
+                    <h5 class="fw-800 mb-3">Connect With Us</h5>
                     <div class="social-links">
-                        @if(isset($settings['facebook_url']))
-                        <a href="{{ $settings['facebook_url'] }}" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                        @endif
-                        @if(isset($settings['instagram_url']))
-                        <a href="{{ $settings['instagram_url'] }}" target="_blank"><i class="fab fa-instagram"></i></a>
-                        @endif
-                        @if(isset($settings['twitter_url']))
-                        <a href="{{ $settings['twitter_url'] }}" target="_blank"><i class="fab fa-twitter"></i></a>
-                        @endif
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-google"></i></a>
                     </div>
                 </div>
             </div>
@@ -156,53 +151,65 @@
     .contact-form-card {
         background: white;
         border-radius: 20px;
-        padding: 2rem;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        padding: 3rem;
+        border: 1px solid var(--slate-200);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
     }
 
     .contact-info-card {
         background: white;
         border-radius: 16px;
-        padding: 1.5rem;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        padding: 2rem;
+        border: 1px solid var(--slate-100);
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
     }
 
-    .contact-info-card h4 {
-        font-size: 1rem;
-        margin-bottom: 1rem;
-        color: var(--dark-color);
-    }
-
-    .contact-info-card a {
-        color: var(--dark-color);
-        text-decoration: none;
-        transition: color 0.3s ease;
-    }
-
-    .contact-info-card a:hover {
-        color: var(--primary-color);
+    .contact-info-card h5 {
+        font-size: 1.1rem;
+        color: var(--secondary-color);
     }
 
     .social-links {
         display: flex;
-        gap: 15px;
+        gap: 12px;
     }
 
     .social-links a {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: #f0f0f0;
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        background: var(--slate-50);
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--dark-color);
+        color: var(--secondary-color);
         transition: all 0.3s ease;
+        text-decoration: none;
     }
 
     .social-links a:hover {
         background: var(--primary-color);
-        color: white;
+        color: var(--secondary-color);
+        transform: translateY(-3px);
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: var(--secondary-color);
+        font-size: 0.9rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .form-control, .form-select {
+        border: 1px solid var(--slate-200);
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        font-size: 0.95rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
     }
 
     .map-section iframe {

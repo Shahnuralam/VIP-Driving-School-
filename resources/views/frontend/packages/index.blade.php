@@ -5,10 +5,11 @@
 @section('content')
 <!-- Page Header -->
 <section class="page-header">
-    <div class="container">
-        <h1 data-aos="fade-up">Lesson Packages</h1>
-        <nav aria-label="breadcrumb" data-aos="fade-up" data-aos-delay="100">
-            <ol class="breadcrumb justify-content-center">
+    <div class="container" data-aos="fade-up">
+        <span class="section-tag" style="color: var(--primary-color);">Save with Packages</span>
+        <h1>Lesson Packages</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('frontend.home') }}">Home</a></li>
                 <li class="breadcrumb-item active">Lesson Packages</li>
             </ol>
@@ -20,8 +21,9 @@
 <section class="section-padding">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="section-title" data-aos="fade-up">Choose Your Package</h2>
-            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Select the package that best suits your learning needs</p>
+            <span class="section-tag" data-aos="fade-up">Packages</span>
+            <h2 class="section-title" data-aos="fade-up" data-aos-delay="100">Choose Your Path</h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="200">Select the package that best suits your learning goals and budget.</p>
         </div>
 
         <!-- Info Alert -->
@@ -36,66 +38,65 @@
         </div>
 
         <!-- Package Grid -->
-        <div class="row g-4">
+        <div class="row g-4 justify-content-center">
             @forelse($packages as $package)
             <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
-                <div class="package-card h-100 {{ $package->is_featured ? 'featured' : '' }}">
+                <div class="package-card h-100 {{ $package->is_featured ? 'featured dark' : '' }}">
                     @if($package->is_featured)
-                    <div class="package-badge popular">
-                        <i class="fas fa-star me-1"></i>Most Popular
-                    </div>
+                        <span class="featured-badge">Best Value</span>
                     @endif
                     
-                    <div class="package-header">
-                        <h4>{{ $package->name }}</h4>
+                    <div class="p-5">
+                        <h3 class="fw-800 mb-2 h4">{{ $package->name }}</h3>
                         @if($package->tagline)
-                        <span class="badge bg-light text-dark">{{ $package->tagline }}</span>
+                        <span class="badge bg-primary text-slate-900 mb-4 px-3 py-2 rounded-2" style="font-weight: 700; background: rgba(245, 158, 11, 0.2); color: var(--primary-color);">{{ $package->tagline }}</span>
                         @endif
-                    </div>
-                    
-                    <div class="package-price">
-                        <span class="currency">$</span>
-                        <span class="amount">{{ number_format($package->price, 0) }}</span>
-                        @if($package->lesson_count)
-                        <span class="period">/ {{ $package->lesson_count }} {{ Str::plural('lesson', $package->lesson_count) }}</span>
+                        
+                        <div class="package-price mb-4">
+                            <span class="currency h4">$</span>
+                            <span class="amount display-4 fw-800">{{ number_format($package->price, 0) }}</span>
+                            @if($package->lesson_count)
+                            <div class="text-muted small mt-1">For {{ $package->lesson_count }} {{ Str::plural('lesson', $package->lesson_count) }}</div>
+                            @endif
+                        </div>
+                        
+                        @if($package->original_price && $package->original_price > $package->price)
+                        <div class="mb-4">
+                            <span class="text-muted text-decoration-line-through me-2">${{ number_format($package->original_price, 0) }}</span>
+                            <span class="badge bg-success bg-opacity-10 text-success px-2 py-1">Save ${{ number_format($package->original_price - $package->price, 0) }}</span>
+                        </div>
                         @endif
-                    </div>
-                    
-                    @if($package->original_price && $package->original_price > $package->price)
-                    <div class="text-center mb-3">
-                        <span class="text-muted text-decoration-line-through">${{ number_format($package->original_price, 0) }}</span>
-                        <span class="badge bg-success ms-2">Save ${{ number_format($package->original_price - $package->price, 0) }}</span>
-                    </div>
-                    @endif
-                    
-                    <div class="package-description">
-                        {!! $package->description !!}
-                    </div>
-                    
-                    <ul class="package-features">
-                        <li><i class="fas fa-check text-success me-2"></i>{{ $package->lesson_count }} x {{ $package->lesson_duration }}-minute lessons</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Flexible scheduling</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Pick-up & drop-off included</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Dual-control vehicle</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Experienced instructor</li>
-                    </ul>
-                    
-                    @if($package->validity_text)
-                    <div class="text-center text-muted small mb-3">
-                        <i class="fas fa-clock me-1"></i>{{ $package->validity_text }}
-                    </div>
-                    @endif
-                    
-                    <div class="package-footer">
-                        <a href="{{ route('book-online', ['package' => $package->id]) }}" class="btn btn-book w-100">
-                            <i class="fas fa-calendar-check me-2"></i>Book This Package
-                        </a>
+                        
+                        <ul class="package-features list-unstyled mb-5">
+                            <li class="mb-3 d-flex align-items-center gap-2">
+                                <i class="fas fa-check-circle text-primary"></i>
+                                <span>{{ $package->lesson_count }} x {{ $package->lesson_duration }}m Lessons</span>
+                            </li>
+                            <li class="mb-3 d-flex align-items-center gap-2">
+                                <i class="fas fa-check-circle text-primary"></i>
+                                <span>Flexible Scheduling</span>
+                            </li>
+                            <li class="mb-3 d-flex align-items-center gap-2">
+                                <i class="fas fa-check-circle text-primary"></i>
+                                <span>Door-to-Door Service</span>
+                            </li>
+                            <li class="d-flex align-items-center gap-2">
+                                <i class="fas fa-check-circle text-primary"></i>
+                                <span>Dual Control Safety</span>
+                            </li>
+                        </ul>
+                        
+                        <div class="mt-auto">
+                            <a href="{{ route('book-online', ['package' => $package->id]) }}" class="btn {{ $package->is_featured ? 'btn-primary' : 'btn-outline-primary' }} w-100 py-3">
+                                Get Started <i class="fas fa-arrow-right ms-2 small"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
             @empty
             <div class="col-12">
-                <div class="alert alert-warning text-center">
+                <div class="alert alert-warning text-center rounded-4 border-0 shadow-sm py-4">
                     <i class="fas fa-exclamation-triangle me-2"></i>No packages available at the moment. Please check back later.
                 </div>
             </div>
@@ -170,9 +171,9 @@
     .package-card {
         background: white;
         border-radius: 16px;
-        padding: 2rem;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        transition: all 0.3s ease;
+        border: 1px solid var(--slate-200);
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
         display: flex;
@@ -180,102 +181,60 @@
     }
 
     .package-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        transform: translateY(-8px);
+        box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        border-color: var(--primary-color);
     }
 
-    .package-card.featured {
-        border: 2px solid var(--primary-color);
-    }
-
-    .package-badge {
-        position: absolute;
-        top: 15px;
-        right: -35px;
+    .package-card.dark {
         background: var(--secondary-color);
         color: white;
-        padding: 5px 40px;
-        font-size: 12px;
-        font-weight: 600;
-        transform: rotate(45deg);
+        border-color: var(--slate-800);
     }
 
-    .package-badge.popular {
-        background: var(--primary-color);
+    .package-card.dark .text-muted {
+        color: var(--slate-400) !important;
     }
 
-    .package-header {
-        text-align: center;
-        margin-bottom: 1.5rem;
+    .amount {
+        line-height: 1;
+        color: var(--secondary-color);
     }
 
-    .package-header h4 {
-        margin-bottom: 0.5rem;
-        color: var(--dark-color);
+    .package-card.dark .amount {
+        color: var(--white);
     }
 
-    .package-price {
-        text-align: center;
-        margin-bottom: 1.5rem;
-    }
-
-    .package-price .currency {
-        font-size: 1.5rem;
-        vertical-align: super;
-    }
-
-    .package-price .amount {
-        font-size: 3rem;
-        font-weight: 700;
+    .package-card.dark .package-price .currency {
         color: var(--primary-color);
     }
 
-    .package-price .period {
-        color: #6c757d;
-        font-size: 0.9rem;
-    }
-
-    .package-description {
-        color: #6c757d;
-        margin-bottom: 1.5rem;
-        flex-grow: 1;
-    }
-
-    .package-features {
-        list-style: none;
-        padding: 0;
-        margin-bottom: 1.5rem;
-    }
-
     .package-features li {
-        padding: 0.5rem 0;
-        border-bottom: 1px solid #eee;
+        color: var(--slate-600);
     }
 
-    .package-features li:last-child {
-        border-bottom: none;
-    }
-
-    .package-footer {
-        margin-top: auto;
+    .package-card.dark .package-features li {
+        color: var(--slate-300);
     }
 
     .accordion-item {
-        border: none;
+        border: 1px solid var(--slate-100);
         margin-bottom: 1rem;
-        border-radius: 8px !important;
+        border-radius: 12px !important;
         overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
 
     .accordion-button {
-        font-weight: 600;
-        background: white;
+        font-weight: 700;
+        padding: 1.25rem;
+        color: var(--secondary-color);
     }
 
     .accordion-button:not(.collapsed) {
-        background: var(--primary-color);
-        color: white;
+        background: var(--slate-50);
+        color: var(--primary-color);
+        box-shadow: none;
     }
 
     .accordion-button:focus {

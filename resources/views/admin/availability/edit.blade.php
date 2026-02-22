@@ -35,7 +35,7 @@
                 @endif
 
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label>Service (Optional)</label>
                             <select name="service_id" class="form-control select2">
@@ -48,7 +48,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label>Location (Optional)</label>
                             <select name="location_id" class="form-control select2">
@@ -59,6 +59,19 @@
                                     </option>
                                 @endforeach
                             </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Instructor(s) (Optional)</label>
+                            <select name="instructor_ids[]" class="form-control select2" multiple="multiple">
+                                @foreach($instructors as $instructor)
+                                    <option value="{{ $instructor->id }}" {{ (collect(old('instructor_ids', $availabilitySlot->instructor_id ? [$availabilitySlot->instructor_id] : []))->contains($instructor->id)) ? 'selected' : '' }}>
+                                        {{ $instructor->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <small class="form-text text-muted">Select specific instructors. <strong>Leave empty for Global Availability</strong> (applies when no specific instructor slot exists).</small>
                         </div>
                     </div>
                 </div>
@@ -96,33 +109,18 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label>Max Bookings <span class="text-danger">*</span></label>
-                            <input type="number" name="max_bookings" class="form-control @error('max_bookings') is-invalid @enderror" value="{{ old('max_bookings', $availabilitySlot->max_bookings) }}" min="{{ $availabilitySlot->current_bookings }}" required>
-                            @error('max_bookings')
-                                <span class="invalid-feedback">{{ $message }}</span>
-                            @enderror
-                            <small class="form-text text-muted">Current bookings: {{ $availabilitySlot->current_bookings }}</small>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
                             <label>&nbsp;</label>
                             <div class="custom-control custom-switch mt-2">
-                                <input type="checkbox" class="custom-control-input" id="is_available" name="is_available" {{ old('is_available', $availabilitySlot->is_available) ? 'checked' : '' }}>
-                                <label class="custom-control-label" for="is_available">Available for Booking</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label>&nbsp;</label>
-                            <div class="custom-control custom-switch mt-2">
-                                <input type="checkbox" class="custom-control-input" id="is_blocked" name="is_blocked" {{ old('is_blocked', $availabilitySlot->is_blocked) ? 'checked' : '' }}>
+                                <input type="checkbox" class="custom-control-input" id="is_blocked" name="is_blocked" value="1" {{ old('is_blocked', $availabilitySlot->is_blocked) ? 'checked' : '' }}>
                                 <label class="custom-control-label" for="is_blocked">Block this Slot</label>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Hidden fields to maintain default values -->
+                <input type="hidden" name="max_bookings" value="{{ old('max_bookings', $availabilitySlot->max_bookings) }}">
+                <input type="hidden" name="is_available" value="1">
 
                 <div class="form-group">
                     <label>Notes (Optional)</label>

@@ -212,7 +212,7 @@ return [
             'icon' => 'fas fa-fw fa-tachometer-alt',
         ],
 
-        ['header' => 'SERVICES MANAGEMENT'],
+        // ['header' => 'SERVICES MANAGEMENT'],
 
         [
             'text' => 'Services',
@@ -270,47 +270,21 @@ return [
             ],
         ],
 
-        ['header' => 'BOOKING MANAGEMENT'],
+        // ['header' => 'BOOKING MANAGEMENT'],
 
         [
-            'text' => 'Bookings',
+            'text' => 'Appointments',
+            'route' => 'admin.bookings.index',
             'icon' => 'fas fa-fw fa-calendar-check',
-            'submenu' => [
-                [
-                    'text' => 'All Bookings',
-                    'route' => 'admin.bookings.index',
-                    'icon' => 'fas fa-fw fa-list',
-                ],
-                [
-                    'text' => 'Calendar View',
-                    'route' => 'admin.bookings.calendar',
-                    'icon' => 'fas fa-fw fa-calendar-alt',
-                ],
-                [
-                    'text' => 'Pending Bookings',
-                    'route' => 'admin.bookings.pending',
-                    'icon' => 'fas fa-fw fa-clock',
-                ],
-            ],
         ],
 
         [
-            'text' => 'Availability',
+            'text' => 'Appointment Slots',
+            'route' => 'admin.availability.index',
             'icon' => 'fas fa-fw fa-clock',
-            'submenu' => [
-                [
-                    'text' => 'Manage Slots',
-                    'route' => 'admin.availability.index',
-                    'icon' => 'fas fa-fw fa-calendar-plus',
-                ],
-                [
-                    'text' => 'Blocked Dates',
-                    'route' => 'admin.availability.blocked',
-                    'icon' => 'fas fa-fw fa-ban',
-                ],
-            ],
         ],
 
+        /*
         ['header' => 'CONTENT MANAGEMENT'],
 
         [
@@ -353,7 +327,9 @@ return [
             'route' => 'admin.documents.index',
             'icon' => 'fas fa-fw fa-file-pdf',
         ],
+        */
 
+        /*
         ['header' => 'CUSTOMERS & BOOKING'],
 
         [
@@ -403,7 +379,9 @@ return [
             'route' => 'admin.waitlist.index',
             'icon' => 'fas fa-fw fa-hourglass-half',
         ],
+        */
 
+        /*
         ['header' => 'CONTENT & MARKETING'],
 
         [
@@ -440,6 +418,7 @@ return [
             'route' => 'admin.analytics.index',
             'icon' => 'fas fa-fw fa-chart-line',
         ],
+        */
 
         ['header' => 'SETTINGS'],
 

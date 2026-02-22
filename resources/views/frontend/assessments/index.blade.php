@@ -5,10 +5,11 @@
 @section('content')
 <!-- Page Header -->
 <section class="page-header">
-    <div class="container">
-        <h1 data-aos="fade-up">P1 Assessments</h1>
-        <nav aria-label="breadcrumb" data-aos="fade-up" data-aos-delay="100">
-            <ol class="breadcrumb justify-content-center">
+    <div class="container" data-aos="fade-up">
+        <span class="section-tag" style="color: var(--primary-color);">Licensing</span>
+        <h1>P1 Assessments</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('frontend.home') }}">Home</a></li>
                 <li class="breadcrumb-item active">P1 Assessments</li>
             </ol>
@@ -23,38 +24,32 @@
             <!-- Main Content -->
             <div class="col-lg-8">
                 <div class="mb-5" data-aos="fade-up">
-                    <h2 class="section-title">About P1 Driver Assessments</h2>
-                    <p class="lead">Our P1 Driver Assessment is designed to help you gain your provisional licence. We offer assessments at multiple locations across Tasmania.</p>
-                    <p>The assessment evaluates your ability to drive safely and independently in a variety of road and traffic conditions. Our experienced assessors will guide you through the process and provide feedback on your driving skills.</p>
+                    <span class="section-tag">Information</span>
+                    <h2 class="fw-800 mb-4">About P1 Driver Assessments</h2>
+                    <p class="lead text-muted">Our P1 Driver Assessment is designed to help you gain your provisional licence. We offer assessments at multiple locations across Tasmania.</p>
+                    <p class="text-muted">The assessment evaluates your ability to drive safely and independently in a variety of road and traffic conditions. Our experienced assessors will guide you through the process and provide feedback on your driving skills.</p>
                 </div>
 
                 <!-- Assessment Locations -->
                 <div class="mb-5" data-aos="fade-up">
-                    <h3 class="mb-4"><i class="fas fa-map-marker-alt text-primary me-2"></i>Assessment Locations</h3>
+                    <h4 class="fw-800 mb-4 d-flex align-items-center gap-2">
+                        <i class="fas fa-map-marker-alt text-primary"></i> Assessment Locations
+                    </h4>
                     <div class="row g-4">
                         @forelse($locations as $location)
                         <div class="col-md-6">
-                            <div class="location-card h-100">
+                            <div class="location-card h-100 border">
                                 <div class="p-4">
-                                    <h5 class="mb-3">{{ $location->name }}</h5>
-                                    <div class="mb-2">
-                                        <i class="fas fa-map-pin text-muted me-2"></i>
+                                    <h5 class="fw-800 mb-3">{{ $location->name }}</h5>
+                                    <div class="d-flex align-items-start gap-2 mb-2 text-muted small">
+                                        <i class="fas fa-map-pin mt-1 text-primary"></i>
                                         <span>{{ $location->address }}</span>
                                     </div>
                                     @if($location->available_days_text)
-                                    <div class="mb-2">
-                                        <i class="fas fa-calendar-alt text-muted me-2"></i>
+                                    <div class="d-flex align-items-center gap-2 mb-2 text-muted small">
+                                        <i class="fas fa-calendar-alt text-primary"></i>
                                         <span>{{ $location->available_days_text }}</span>
                                     </div>
-                                    @endif
-                                    @if($location->contact_phone)
-                                    <div class="mb-2">
-                                        <i class="fas fa-phone text-muted me-2"></i>
-                                        <span>{{ $location->contact_phone }}</span>
-                                    </div>
-                                    @endif
-                                    @if($location->description)
-                                    <p class="text-muted small mt-3 mb-0">{{ $location->description }}</p>
                                     @endif
                                 </div>
                             </div>
@@ -231,102 +226,64 @@
     .sidebar-card {
         background: white;
         border-radius: 16px;
-        padding: 1.5rem;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        padding: 2.5rem;
+        border: 1px solid var(--slate-100);
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
     }
 
     .sidebar-card h4 {
-        font-size: 1.1rem;
-        margin-bottom: 1rem;
-        padding-bottom: 0.75rem;
-        border-bottom: 2px solid #f0f0f0;
-    }
-
-    .info-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        color: var(--secondary-color);
     }
 
     .info-list li {
-        display: flex;
-        align-items: flex-start;
-        gap: 12px;
-        padding: 0.75rem 0;
-        border-bottom: 1px solid #f0f0f0;
-    }
-
-    .info-list li:last-child {
-        border-bottom: none;
-    }
-
-    .info-list i {
-        flex-shrink: 0;
-        margin-top: 3px;
-    }
-
-    .document-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .document-link {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 0.75rem;
-        margin: 0.5rem 0;
-        background: #f8f9fa;
-        border-radius: 8px;
-        text-decoration: none;
-        color: var(--dark-color);
-        transition: all 0.3s ease;
-    }
-
-    .document-link:hover {
-        background: #e9ecef;
-        color: var(--primary-color);
-    }
-
-    .document-link span {
-        flex-grow: 1;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--slate-50);
+        font-size: 0.95rem;
+        color: var(--slate-600);
     }
 
     .process-step {
         text-align: center;
-        padding: 2rem;
+        padding: 3rem 2rem;
         background: white;
-        border-radius: 16px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        border-radius: 20px;
+        border: 1px solid var(--slate-100);
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         height: 100%;
+        transition: transform 0.3s ease;
+    }
+
+    .process-step:hover {
+        transform: translateY(-5px);
+        border-color: var(--primary-color);
     }
 
     .step-number {
-        width: 50px;
-        height: 50px;
-        background: var(--primary-color);
-        color: white;
-        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        border-radius: 15px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 1.5rem;
-        font-weight: 700;
-        margin: 0 auto 1rem;
+        font-weight: 800;
+        margin: 0 auto 1.5rem;
     }
 
     .location-card {
         background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        border-radius: 16px;
         transition: all 0.3s ease;
-        border-left: 4px solid var(--primary-color);
     }
 
     .location-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        border-color: var(--primary-color) !important;
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
     }
 </style>
 @endsection

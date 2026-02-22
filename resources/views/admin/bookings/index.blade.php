@@ -1,10 +1,10 @@
 @extends('adminlte::page')
 
-@section('title', 'Bookings')
+@section('title', 'Appointments')
 
 @section('content_header')
     <div class="d-flex justify-content-between align-items-center">
-        <h1>All Bookings</h1>
+        <h1>Appointments</h1>
         <div>
             <a href="{{ route('admin.bookings.calendar') }}" class="btn btn-info">
                 <i class="fas fa-calendar-alt"></i> Calendar View
@@ -90,7 +90,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="8" class="text-center text-muted">No bookings found</td>
+                    <td colspan="8" class="text-center text-muted">No appointments found</td>
                 </tr>
                 @endforelse
             </tbody>

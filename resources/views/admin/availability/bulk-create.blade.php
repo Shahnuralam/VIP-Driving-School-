@@ -32,6 +32,22 @@
                 </div>
 
                 <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Instructor(s) (Optional)</label>
+                            <select name="instructor_ids[]" class="form-control select2" multiple="multiple">
+                                @foreach($instructors as $instructor)
+                                    <option value="{{ $instructor->id }}" {{ (collect(old('instructor_ids'))->contains($instructor->id)) ? 'selected' : '' }}>
+                                        {{ $instructor->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <small class="form-text text-muted">Select specific instructors. <strong>Leave empty for Global Availability</strong> (applies when no specific instructor slot exists).</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Service (Optional)</label>

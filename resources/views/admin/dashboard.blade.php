@@ -13,7 +13,7 @@
         <div class="small-box bg-info">
             <div class="inner">
                 <h3>{{ $todayBookings }}</h3>
-                <p>Today's Bookings</p>
+                <p>Today's Appointments</p>
             </div>
             <div class="icon">
                 <i class="fas fa-calendar-check"></i>
@@ -45,7 +45,7 @@
         <div class="small-box bg-warning">
             <div class="inner">
                 <h3>{{ $pendingBookings }}</h3>
-                <p>Pending Bookings</p>
+                <p>Pending Appointments</p>
             </div>
             <div class="icon">
                 <i class="fas fa-clock"></i>
@@ -101,7 +101,7 @@
             <div class="card-body p-0">
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        This Week Bookings
+                        This Week Appointments
                         <span class="badge badge-primary badge-pill">{{ $weekBookings }}</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -109,7 +109,7 @@
                         <span class="badge badge-success badge-pill">${{ number_format($weekRevenue, 0) }}</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        This Month Bookings
+                        This Month Appointments
                         <span class="badge badge-primary badge-pill">{{ $monthBookings }}</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -141,7 +141,7 @@
             <div class="card-header">
                 <h3 class="card-title">
                     <i class="fas fa-calendar mr-1"></i>
-                    Upcoming Bookings
+                    Upcoming Appointments
                 </h3>
             </div>
             <div class="card-body p-0">
@@ -164,14 +164,14 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="text-center text-muted">No upcoming bookings</td>
+                            <td colspan="4" class="text-center text-muted">No upcoming appointments</td>
                         </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
             <div class="card-footer text-center">
-                <a href="{{ route('admin.bookings.index') }}">View All Bookings</a>
+                <a href="{{ route('admin.bookings.index') }}">View All Appointments</a>
             </div>
         </div>
     </div>
@@ -182,7 +182,7 @@
             <div class="card-header">
                 <h3 class="card-title">
                     <i class="fas fa-history mr-1"></i>
-                    Recent Bookings
+                    Recent Appointments
                 </h3>
             </div>
             <div class="card-body p-0">
@@ -205,14 +205,14 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="text-center text-muted">No recent bookings</td>
+                            <td colspan="4" class="text-center text-muted">No recent appointments</td>
                         </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
             <div class="card-footer text-center">
-                <a href="{{ route('admin.bookings.index') }}">View All Bookings</a>
+                <a href="{{ route('admin.bookings.index') }}">View All Appointments</a>
             </div>
         </div>
     </div>

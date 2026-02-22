@@ -1,12 +1,12 @@
 @extends('adminlte::page')
 
-@section('title', 'Pending Bookings')
+@section('title', 'Pending Appointments')
 
 @section('content_header')
     <div class="d-flex justify-content-between align-items-center">
-        <h1><i class="fas fa-clock text-warning mr-2"></i>Pending Bookings</h1>
+        <h1><i class="fas fa-clock text-warning mr-2"></i>Pending Appointments</h1>
         <a href="{{ route('admin.bookings.index') }}" class="btn btn-secondary">
-            <i class="fas fa-list"></i> All Bookings
+            <i class="fas fa-list"></i> All Appointments
         </a>
     </div>
 @stop
@@ -59,7 +59,7 @@
                 <tr>
                     <td colspan="7" class="text-center text-muted py-4">
                         <i class="fas fa-check-circle fa-3x mb-3 text-success"></i>
-                        <p>No pending bookings! All caught up.</p>
+                        <p>No pending appointments! All caught up.</p>
                     </td>
                 </tr>
                 @endforelse

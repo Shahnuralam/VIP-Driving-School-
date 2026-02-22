@@ -19,6 +19,8 @@ use App\Mail\BookingConfirmation;
 use App\Mail\AdminBookingNotification;
 use Illuminate\Support\Facades\Mail;
 
+use App\Models\Instructor;
+
 class BookingController extends Controller
 {
     public function index()
@@ -39,6 +41,10 @@ class BookingController extends Controller
         $locations = Location::active()
             ->ordered()
             ->get();
+            
+        $instructors = Instructor::active()
+            ->ordered()
+            ->get();
 
         $infoCards = InfoCard::active()
             ->forPage('book-online')
@@ -47,7 +53,7 @@ class BookingController extends Controller
 
         $settings = Setting::pluck('value', 'key')->toArray();
 
-        return view('frontend.booking.index', compact('services', 'categories', 'packages', 'locations', 'infoCards', 'settings'));
+        return view('frontend.booking.index', compact('services', 'categories', 'packages', 'locations', 'instructors', 'infoCards', 'settings'));
     }
 
     public function getSlots(Request $request)
@@ -55,6 +61,7 @@ class BookingController extends Controller
         $date = $request->get('date');
         $locationId = $request->get('location_id');
         $serviceId = $request->get('service_id');
+        $instructorId = $request->get('instructor_id');
 
         if (!$date) {
             return response()->json(['slots' => []]);
@@ -81,6 +88,14 @@ class BookingController extends Controller
             });
         }
 
+        if ($instructorId) {
+            $query->where('instructor_id', $instructorId);
+        } else {
+            // If checking "Any" instructor, we include Global (null) and Specific slots
+            // This is default behavior if we don't filter.
+             // However, business logic might change. For now, "Any" means show all available options.
+        }
+
         $slots = $query->orderBy('start_time')->get();
 
         $formattedSlots = $slots->map(function ($slot) {
@@ -89,6 +104,8 @@ class BookingController extends Controller
                 'start_time' => Carbon::parse($slot->start_time)->format('g:i A'),
                 'end_time' => Carbon::parse($slot->end_time)->format('g:i A'),
                 'is_available' => $slot->hasAvailability(),
+                'instructor_name' => $slot->instructor ? $slot->instructor->name : 'Any Instructor',
+                'instructor_photo' => $slot->instructor ? $slot->instructor->getPhotoUrl() : null,
             ];
         });
 
@@ -100,6 +117,7 @@ class BookingController extends Controller
         $request->validate([
             'service_id' => 'nullable|exists:services,id',
             'location_id' => 'nullable|exists:locations,id',
+            'instructor_id' => 'nullable|exists:instructors,id',
             'month' => 'required|date_format:Y-m',
         ]);
 
@@ -123,6 +141,10 @@ class BookingController extends Controller
             });
         }
 
+        if ($request->filled('instructor_id')) {
+            $query->where('instructor_id', $request->instructor_id);
+        }
+
         $slots = $query->orderBy('date')
             ->orderBy('start_time')
             ->get()
@@ -134,11 +156,13 @@ class BookingController extends Controller
         foreach ($slots as $date => $daySlots) {
             $events[] = [
                 'date' => $date,
+                'count' => $daySlots->count(), // Add count for frontend to show simple availability indicator?
                 'slots' => $daySlots->map(function ($slot) {
                     return [
                         'id' => $slot->id,
                         'time' => $slot->time_range,
                         'remaining' => $slot->remaining,
+                        'instructor' => $slot->instructor ? $slot->instructor->name : 'Global',
                     ];
                 }),
             ];

@@ -1,10 +1,10 @@
 @extends('adminlte::page')
 
-@section('title', 'Bookings Calendar')
+@section('title', 'Appointment Calendar')
 
 @section('content_header')
     <div class="d-flex justify-content-between align-items-center">
-        <h1>Bookings Calendar</h1>
+        <h1>Appointment Calendar</h1>
         <a href="{{ route('admin.bookings.index') }}" class="btn btn-secondary">
             <i class="fas fa-list"></i> List View
         </a>
@@ -23,7 +23,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Booking Details</h5>
+                <h5 class="modal-title">Appointment Details</h5>
                 <button type="button" class="close" data-dismiss="modal">
                     <span>&times;</span>
                 </button>

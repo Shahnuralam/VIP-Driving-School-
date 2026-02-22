@@ -6,44 +6,52 @@
 <!-- Hero Section -->
 <section class="hero-section">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6" data-aos="fade-right">
-                <h1 class="hero-title">Learn to Drive with Confidence</h1>
-                <p class="hero-subtitle">Professional driving lessons and P1 assessments in Hobart. Our experienced instructors will help you become a safe and confident driver.</p>
-                <div class="d-flex gap-3 flex-wrap">
-                    <a href="{{ route('book-online') }}" class="btn btn-book btn-lg">
-                        <i class="fas fa-calendar-check me-2"></i>Book a Lesson
+        <div class="row justify-content-center">
+            <div class="col-lg-10" data-aos="fade-up">
+                <span class="section-tag mb-3" style="color: var(--primary-color);">Hobart's Trusted Driving School</span>
+                <h1 class="hero-title">Developing <span>Safe & Competent</span> Drivers</h1>
+                <p class="hero-subtitle">Expert instruction for learners, nervous drivers, and P1 assessments. Let the experts guide you to confidence on the road.</p>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a href="{{ route('book-online') }}" class="btn btn-book">
+                        Book a Lesson
                     </a>
-                    <a href="{{ route('lesson-packages') }}" class="btn btn-outline-light btn-lg">
+                    <a href="{{ route('lesson-packages') }}" class="btn btn-outline-light">
                         View Packages
                     </a>
-                </div>
-                <div class="mt-4 d-flex gap-4">
-                    <div>
-                        <h3 class="mb-0">500+</h3>
-                        <small class="opacity-75">Happy Students</small>
-                    </div>
-                    <div>
-                        <h3 class="mb-0">98%</h3>
-                        <small class="opacity-75">Pass Rate</small>
-                    </div>
-                    <div>
-                        <h3 class="mb-0">10+</h3>
-                        <small class="opacity-75">Years Experience</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 text-center" data-aos="fade-left">
-                <div class="hero-image-placeholder rounded-4 shadow-lg d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #1a365d 0%, #2d5a87 100%); min-height: 400px;">
-                    <div class="text-white text-center p-4">
-                        <i class="fas fa-car fa-4x mb-3 opacity-50"></i>
-                        <h4 class="opacity-75">Professional Driving Lessons</h4>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Stats Bar -->
+<div class="bg-white py-5 border-bottom">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-md-4" data-aos="fade-up">
+                <div class="px-4">
+                    <div class="text-primary mb-2"><i class="fas fa-user-check fa-2x"></i></div>
+                    <h5 class="fw-800 mb-1">Certified Instructors</h5>
+                    <p class="text-muted small mb-0">Accredited by the Tasmanian Government</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="px-4">
+                    <div class="text-primary mb-2"><i class="fas fa-heart fa-2x"></i></div>
+                    <h5 class="fw-800 mb-1">Nervous Driver Specialists</h5>
+                    <p class="text-muted small mb-0">Patient, supportive approach for anxious learners</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="px-4">
+                    <div class="text-primary mb-2"><i class="fas fa-star fa-2x"></i></div>
+                    <h5 class="fw-800 mb-1">5/5 Customer Rating</h5>
+                    <p class="text-muted small mb-0">Consistently rated 5 stars on Facebook</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Why Choose Us -->
 <section class="section-padding bg-light">
@@ -96,25 +104,44 @@
 </section>
 
 <!-- Services Section -->
-<section class="section-padding">
+<section class="section-padding bg-slate-50">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="section-title" data-aos="fade-up">Our Services</h2>
-            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Comprehensive driving education for all levels</p>
+            <span class="section-tag" data-aos="fade-up">Our Services</span>
+            <h2 class="section-title" data-aos="fade-up" data-aos-delay="100">Choose Your Path</h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="200">Comprehensive driving education tailored to your needs.</p>
         </div>
-        <div class="row g-4">
+        <div class="row g-4 justify-content-center">
             @foreach($categories as $category)
+            @php
+                $isFeatured = str_contains(strtolower($category->name), 'package');
+            @endphp
             <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
-                <div class="service-card">
-                    <div class="p-4">
-                        <div class="mb-3">
-                            <i class="{{ $category->icon ?? 'fas fa-car' }} fa-2x text-primary"></i>
+                <div class="service-card {{ $isFeatured ? 'dark featured' : '' }}">
+                    @if($isFeatured)
+                        <span class="featured-badge">Most Popular</span>
+                    @endif
+                    <div class="p-5">
+                        <div class="mb-4">
+                            <i class="{{ $category->icon ?? ($isFeatured ? 'fas fa-box-open' : 'fas fa-car') }} fa-2x text-primary p-3 rounded-3" style="background: rgba(245, 158, 11, 0.1);"></i>
                         </div>
-                        <h4>{{ $category->name }}</h4>
-                        <p class="text-muted">{{ $category->description ?? 'Professional ' . strtolower($category->name) . ' services to help you succeed.' }}</p>
-                        <p class="mb-3"><strong>{{ $category->active_services_count }} services available</strong></p>
-                        <a href="{{ route('book-online') }}" class="btn btn-outline-primary">
-                            View Services <i class="fas fa-arrow-right ms-2"></i>
+                        <h3 class="fw-800 mb-3 h4">{{ $category->name }}</h3>
+                        
+                        @if($isFeatured)
+                            <div class="mb-3">
+                                <span class="text-primary fw-bold">From $235</span>
+                            </div>
+                        @else
+                            <div class="mb-3">
+                                <span class="fw-bold" style="color: var(--primary-color);">$80</span>
+                            </div>
+                        @endif
+
+                        <p class="text-muted mb-4" style="font-size: 0.95rem;">{{ $category->description ?? 'Professional ' . strtolower($category->name) . ' services to help you succeed.' }}</p>
+                        
+                        <a href="{{ route('book-online') }}" class="btn {{ $isFeatured ? 'btn-primary w-100' : 'btn-link p-0 text-decoration-none fw-bold' }}" style="{{ !$isFeatured ? 'color: var(--secondary-color);' : '' }}">
+                            {{ $isFeatured ? 'View Packages' : 'Book Now' }} 
+                            <i class="fas fa-arrow-right ms-2 small"></i>
                         </a>
                     </div>
                 </div>
@@ -124,27 +151,107 @@
     </div>
 </section>
 
+<!-- Why Choose Us -->
+<section class="section-padding">
+    <div class="container">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <span class="section-tag">Why Us</span>
+                <h2 class="section-title">The Expert Advantage</h2>
+                <p class="text-muted mb-5">We are not just a driving school; we are your partners in mastering the road. Our methods are proven, our instructors are patient, and our results speak for themselves.</p>
+                
+                <div class="row g-4">
+                    <div class="col-sm-6">
+                        <div class="d-flex gap-3 align-items-start">
+                            <i class="fas fa-check-circle text-primary mt-1"></i>
+                            <div>
+                                <h6 class="fw-800 mb-1">Dual Controls</h6>
+                                <p class="small text-muted mb-0">Maximum safety in modern vehicles.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex gap-3 align-items-start">
+                            <i class="fas fa-check-circle text-primary mt-1"></i>
+                            <div>
+                                <h6 class="fw-800 mb-1">Expert Feedback</h6>
+                                <p class="small text-muted mb-0">Detailed progress reports.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex gap-3 align-items-start">
+                            <i class="fas fa-check-circle text-primary mt-1"></i>
+                            <div>
+                                <h6 class="fw-800 mb-1">Flexible Booking</h6>
+                                <p class="small text-muted mb-0">Online 24/7 rescheduling.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex gap-3 align-items-start">
+                            <i class="fas fa-check-circle text-primary mt-1"></i>
+                            <div>
+                                <h6 class="fw-800 mb-1">Fast Track</h6>
+                                <p class="small text-muted mb-0">Get your P's faster.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="position-relative">
+                    <img src="https://images.unsplash.com/photo-1596733430284-f7437764b1a9?q=80&w=2070&auto=format&fit=crop" class="img-fluid rounded-4 shadow-lg" alt="Driving Lesson">
+                    <div class="position-absolute bottom-0 start-0 p-4 m-4 bg-white rounded-3 shadow-lg d-none d-md-block" style="max-width: 250px;">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="bg-primary-light p-2 rounded-2">
+                                <i class="fas fa-award text-primary fa-lg"></i>
+                            </div>
+                            <span class="fw-800 small">Top Rated in Hobart Region</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Locations Section -->
 <section class="section-padding bg-light">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="section-title" data-aos="fade-up">Our Service Areas</h2>
-            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">We provide driving lessons across Hobart and surrounding areas</p>
+            <span class="section-tag" data-aos="fade-up">Coverage</span>
+            <h2 class="section-title" data-aos="fade-up" data-aos-delay="100">Servicing Greater Hobart</h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="200">Our instructors come to you. See our primary pickup zones below.</p>
         </div>
+        
         <div class="row g-4">
-            @foreach($locations as $location)
-            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
-                <div class="location-card">
-                    <div class="p-4">
-                        <h5><i class="fas fa-map-marker-alt text-primary me-2"></i>{{ $location->name }}</h5>
-                        <p class="text-muted small mb-2">{{ $location->address }}</p>
-                        @if($location->available_days_text)
-                        <p class="mb-0"><strong>Available:</strong> {{ $location->available_days_text }}</p>
-                        @endif
+            <div class="col-md-6" data-aos="fade-right">
+                <div class="bg-white p-4 rounded-4 border h-100">
+                    <h5 class="fw-800 mb-4 d-flex align-items-center gap-2">
+                        <i class="fas fa-car text-primary"></i> Driving Lessons
+                    </h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach($locations->take(10) as $location)
+                            <span class="badge bg-slate-100 text-slate-700 px-3 py-2 rounded-2 border" style="font-weight: 600;">{{ $location->name }}</span>
+                        @endforeach
                     </div>
+                    <p class="mt-4 small text-muted">We also service Kingston & surrounding suburbs. For unlisted areas, call us for alternative arrangements.</p>
                 </div>
             </div>
-            @endforeach
+            <div class="col-md-6" data-aos="fade-left">
+                <div class="bg-white p-4 rounded-4 border h-100">
+                    <h5 class="fw-800 mb-4 d-flex align-items-center gap-2">
+                        <i class="fas fa-id-card text-primary"></i> P1 Assessment Routes
+                    </h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach($locations->take(6) as $location)
+                            <span class="badge" style="background: rgba(245, 158, 11, 0.1); color: var(--primary-color); font-weight: 700; padding: 10px 16px;">{{ $location->name }}</span>
+                        @endforeach
+                    </div>
+                    <p class="mt-4 small text-muted">Accredited P1 Assessors working on behalf of State Growth across multiple assessment routes.</p>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -154,47 +261,57 @@
 <section class="section-padding">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="section-title" data-aos="fade-up">What Our Students Say</h2>
-            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Hear from our satisfied students</p>
+            <span class="section-tag" data-aos="fade-up">Testimonials</span>
+            <h2 class="section-title" data-aos="fade-up" data-aos-delay="100">What Our Students Say</h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="200">Hear from our satisfied students who mastered the road with us.</p>
         </div>
-        <div class="swiper testimonials-swiper" data-aos="fade-up">
+        <div class="swiper testimonials-swiper pb-5" data-aos="fade-up">
             <div class="swiper-wrapper">
                 @foreach($testimonials as $testimonial)
-                <div class="swiper-slide">
-                    <div class="testimonial-card">
+                <div class="swiper-slide h-auto">
+                    <div class="testimonial-card shadow-sm">
                         <div class="stars mb-3">
                             @for($i = 0; $i < $testimonial->rating; $i++)
-                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star fa-sm"></i>
                             @endfor
                         </div>
-                        <p class="mb-3">"{{ $testimonial->content }}"</p>
-                        <div class="d-flex align-items-center">
-                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                        <p class="mb-4" style="color: var(--slate-600); font-style: italic;">"{{ $testimonial->content }}"</p>
+                        <div class="d-flex align-items-center mt-auto">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center fw-800" style="width: 44px; height: 44px; background: var(--slate-100); color: var(--secondary-color);">
                                 {{ substr($testimonial->customer_name, 0, 1) }}
                             </div>
                             <div class="ms-3">
-                                <h6 class="mb-0">{{ $testimonial->customer_name }}</h6>
-                                <small class="text-muted">{{ $testimonial->customer_location ?? 'Hobart' }}</small>
+                                <h6 class="mb-0 fw-800">{{ $testimonial->customer_name }}</h6>
+                                <small class="text-slate-500" style="color: var(--slate-500);">{{ $testimonial->customer_location ?? 'Hobart' }}</small>
                             </div>
                         </div>
                     </div>
                 </div>
                 @endforeach
             </div>
-            <div class="swiper-pagination mt-4"></div>
+            <div class="swiper-pagination"></div>
         </div>
     </div>
 </section>
 @endif
 
 <!-- CTA Section -->
-<section class="section-padding" style="background: linear-gradient(135deg, var(--primary-color) 0%, #2d5a8c 100%);">
-    <div class="container text-center text-white">
-        <h2 class="mb-3" data-aos="fade-up">Ready to Get Started?</h2>
-        <p class="lead mb-4 opacity-75" data-aos="fade-up" data-aos-delay="100">Book your first driving lesson today and take the first step towards your licence</p>
-        <a href="{{ route('book-online') }}" class="btn btn-book btn-lg" data-aos="fade-up" data-aos-delay="200">
-            <i class="fas fa-calendar-check me-2"></i>Book Now
-        </a>
+<section class="section-padding" style="background: var(--secondary-color);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h2 class="text-white fw-800 mb-4 h1" data-aos="fade-up">Ready to Start Your Journey?</h2>
+                <p class="text-slate-400 mb-5 h5" style="color: var(--slate-400); opacity: 0.8;" data-aos="fade-up" data-aos-delay="100">Book your first lesson today and experience the expert difference.</p>
+                <div class="d-flex gap-3 justify-content-center flex-wrap" data-aos="fade-up" data-aos-delay="200">
+                    <a href="{{ route('book-online') }}" class="btn btn-book btn-lg px-5">
+                        Book Online Now
+                    </a>
+                    <a href="{{ route('contact') }}" class="btn btn-outline-light btn-lg px-5">
+                        Contact Us
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 @endsection

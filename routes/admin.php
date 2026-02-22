@@ -63,9 +63,12 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::resource('bookings', BookingController::class)->only(['index', 'show', 'destroy']);
 
     // Availability
+    Route::get('availability/calendar/events', [AvailabilityController::class, 'calendarEvents'])->name('availability.calendar.events');
     Route::get('availability/bulk-create', [AvailabilityController::class, 'bulkCreate'])->name('availability.bulk-create');
     Route::post('availability/bulk-store', [AvailabilityController::class, 'bulkStore'])->name('availability.bulk-store');
+    Route::delete('availability/bulk-destroy', [AvailabilityController::class, 'bulkDestroy'])->name('availability.bulk-destroy');
     Route::get('availability/blocked', [AvailabilityController::class, 'blocked'])->name('availability.blocked');
+    Route::post('availability/block-date', [AvailabilityController::class, 'blockDate'])->name('availability.block-date');
     Route::patch('availability/{availabilitySlot}/toggle-block', [AvailabilityController::class, 'toggleBlock'])->name('availability.toggle-block');
     Route::resource('availability', AvailabilityController::class)->parameters([
         'availability' => 'availabilitySlot'

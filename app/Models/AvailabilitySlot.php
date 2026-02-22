@@ -20,6 +20,8 @@ class AvailabilitySlot extends Model
         'is_available',
         'is_blocked',
         'notes',
+        'instructor_id',
+        'pattern_type',
     ];
 
     protected $casts = [
@@ -38,6 +40,11 @@ class AvailabilitySlot extends Model
     public function location(): BelongsTo
     {
         return $this->belongsTo(Location::class);
+    }
+
+    public function instructor(): BelongsTo
+    {
+        return $this->belongsTo(Instructor::class);
     }
 
     public function bookings(): HasMany

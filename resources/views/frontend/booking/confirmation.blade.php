@@ -4,75 +4,59 @@
 
 @section('content')
 <!-- Confirmation Section -->
-<section class="section-padding">
+<section class="section-padding bg-slate-50 min-vh-100 d-flex align-items-center">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="confirmation-card text-center" data-aos="fade-up">
-                    <div class="success-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <h1 class="mb-3">Booking Confirmed!</h1>
-                    <p class="lead text-muted mb-4">Thank you for booking with VIP Driving School Hobart. Your booking has been confirmed.</p>
-
-                    <div class="booking-details">
-                        <div class="detail-item">
-                            <span class="label">Booking Reference</span>
-                            <span class="value text-primary fw-bold">{{ $booking->booking_reference }}</span>
+            <div class="col-lg-6">
+                <div class="bg-white p-5 rounded-4 shadow-sm border border-slate-100 text-center" data-aos="fade-up">
+                    <div class="mb-4">
+                        <div class="d-inline-flex p-4 rounded-circle bg-success bg-opacity-10 text-success">
+                            <i class="fas fa-check-circle fa-4x"></i>
                         </div>
-                        <div class="detail-item">
-                            <span class="label">Service</span>
-                            <span class="value">
+                    </div>
+                    <h1 class="fw-800 mb-3 text-secondary">Booking Confirmed!</h1>
+                    <p class="text-slate-500 mb-5">Thank you for choosing VIP Driving School. Your session is locked in and a confirmation has been sent to your email.</p>
+
+                    <div class="bg-slate-50 rounded-4 p-4 text-start mb-5 border border-slate-100">
+                        <h6 class="fw-800 mb-3 text-secondary text-uppercase small" style="letter-spacing: 0.05em;">Booking Details</h6>
+                        <div class="d-flex justify-content-between mb-2 pb-2 border-bottom border-slate-200">
+                            <span class="text-slate-500">Reference:</span>
+                            <span class="fw-bold text-secondary">{{ $booking->booking_reference }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2 pb-2 border-bottom border-slate-200">
+                            <span class="text-slate-500">Service:</span>
+                            <span class="fw-bold text-secondary">
                                 @if($booking->service)
                                     {{ $booking->service->name }}
                                 @elseif($booking->package)
                                     {{ $booking->package->name }}
-                                @else
-                                    N/A
                                 @endif
                             </span>
                         </div>
-                        <div class="detail-item">
-                            <span class="label">Date</span>
-                            <span class="value">{{ $booking->booking_date->format('l, F j, Y') }}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="label">Time</span>
-                            <span class="value">{{ \Carbon\Carbon::parse($booking->booking_time)->format('g:i A') }}</span>
-                        </div>
-                        @if($booking->location)
-                        <div class="detail-item">
-                            <span class="label">Location</span>
-                            <span class="value">{{ $booking->location->name }}</span>
-                        </div>
-                        @endif
-                        <div class="detail-item">
-                            <span class="label">Amount Paid</span>
-                            <span class="value text-success fw-bold">${{ number_format($booking->amount, 2) }}</span>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-slate-500">Date & Time:</span>
+                            <span class="fw-bold text-secondary text-end">
+                                {{ $booking->booking_date->format('l, F j, Y') }}<br>
+                                <small class="text-primary">{{ \Carbon\Carbon::parse($booking->booking_time)->format('g:i A') }}</small>
+                            </span>
                         </div>
                     </div>
 
-                    <div class="alert alert-info mt-4">
-                        <i class="fas fa-envelope me-2"></i>
-                        A confirmation email has been sent to <strong>{{ $booking->customer_email }}</strong>
+                    <div class="row g-3 mb-5 text-start">
+                        <div class="col-12">
+                            <div class="d-flex gap-3">
+                                <i class="fas fa-info-circle text-primary mt-1"></i>
+                                <p class="small text-muted mb-0"><strong>What's Next?</strong> Your instructor will contact you before the lesson. Please have your learners licence ready.</p>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="mt-4">
-                        <h5>What's Next?</h5>
-                        <ul class="next-steps">
-                            <li><i class="fas fa-check text-success me-2"></i>You will receive a confirmation email with all the details</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Our instructor will contact you before the lesson</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Please arrive 15 minutes before your scheduled time</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Bring your valid learner licence</li>
-                        </ul>
-                    </div>
-
-                    <div class="d-flex gap-3 justify-content-center mt-4">
-                        <a href="{{ route('frontend.home') }}" class="btn btn-outline-primary btn-lg">
-                            <i class="fas fa-home me-2"></i>Back to Home
+                    <div class="d-grid gap-3">
+                        <a href="{{ route('frontend.home') }}" class="btn btn-primary py-3 fw-bold">
+                            Return Home
                         </a>
-                        <a href="{{ route('book-online') }}" class="btn btn-book btn-lg">
-                            <i class="fas fa-calendar-plus me-2"></i>Book Another Lesson
+                        <a href="{{ route('customer.dashboard') }}" class="btn btn-outline-slate py-3 fw-bold">
+                            Manage Booking
                         </a>
                     </div>
                 </div>
@@ -84,65 +68,17 @@
 
 @section('styles')
 <style>
-    .confirmation-card {
-        background: white;
-        border-radius: 20px;
-        padding: 3rem;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    .bg-slate-50 { background-color: var(--slate-50); }
+    .text-slate-500 { color: var(--slate-500); }
+    .text-secondary { color: var(--secondary-color); }
+    .tracking-wider { letter-spacing: 0.05em; }
+    .btn-outline-slate {
+        border: 1px solid var(--slate-200);
+        color: var(--secondary-color);
     }
-
-    .success-icon {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 2rem;
-    }
-
-    .success-icon i {
-        font-size: 3rem;
-        color: white;
-    }
-
-    .booking-details {
-        background: #f8f9fa;
-        border-radius: 12px;
-        padding: 1.5rem;
-        margin-top: 2rem;
-    }
-
-    .detail-item {
-        display: flex;
-        justify-content: space-between;
-        padding: 0.75rem 0;
-        border-bottom: 1px solid #e9ecef;
-    }
-
-    .detail-item:last-child {
-        border-bottom: none;
-    }
-
-    .detail-item .label {
-        color: #6c757d;
-    }
-
-    .detail-item .value {
-        font-weight: 500;
-    }
-
-    .next-steps {
-        list-style: none;
-        padding: 0;
-        text-align: left;
-        max-width: 400px;
-        margin: 1rem auto;
-    }
-
-    .next-steps li {
-        padding: 0.5rem 0;
+    .btn-outline-slate:hover {
+        background: var(--slate-50);
+        border-color: var(--slate-300);
     }
 </style>
 @endsection

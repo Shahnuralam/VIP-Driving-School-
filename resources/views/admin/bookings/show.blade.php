@@ -1,10 +1,10 @@
 @extends('adminlte::page')
 
-@section('title', 'Booking Details')
+@section('title', 'Appointment Details')
 
 @section('content_header')
     <div class="d-flex justify-content-between align-items-center">
-        <h1>Booking: {{ $booking->booking_reference }}</h1>
+        <h1>Appointment: {{ $booking->booking_reference }}</h1>
         <a href="{{ route('admin.bookings.index') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Back to List
         </a>
@@ -37,7 +37,7 @@
         <!-- Booking Details -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-calendar-check mr-2"></i>Booking Details</h3>
+                <h3 class="card-title"><i class="fas fa-calendar-check mr-2"></i>Appointment Details</h3>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -142,11 +142,11 @@
         <!-- Delete Option -->
         <div class="card border-danger">
             <div class="card-header bg-danger text-white">
-                <h3 class="card-title"><i class="fas fa-trash mr-2"></i>Delete Booking</h3>
+                <h3 class="card-title"><i class="fas fa-trash mr-2"></i>Delete Appointment</h3>
             </div>
             <div class="card-body">
-                <p class="text-muted">This action cannot be undone. Only cancelled bookings can be deleted.</p>
-                <form action="{{ route('admin.bookings.destroy', $booking) }}" method="POST" onsubmit="return confirm('Are you sure you want to permanently delete this booking?')">
+                <p class="text-muted">This action cannot be undone. Only cancelled appointments can be deleted.</p>
+                <form action="{{ route('admin.bookings.destroy', $booking) }}" method="POST" onsubmit="return confirm('Are you sure you want to permanently delete this appointment?')">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger btn-block">

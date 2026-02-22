@@ -5,10 +5,11 @@
 @section('content')
 <!-- Page Header -->
 <section class="page-header">
-    <div class="container">
-        <h1 data-aos="fade-up">Book Online</h1>
-        <nav aria-label="breadcrumb" data-aos="fade-up" data-aos-delay="100">
-            <ol class="breadcrumb justify-content-center">
+    <div class="container" data-aos="fade-up">
+        <span class="section-tag" style="color: var(--primary-color);">Reservation</span>
+        <h1>Book Online</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('frontend.home') }}">Home</a></li>
                 <li class="breadcrumb-item active">Book Online</li>
             </ol>
@@ -23,25 +24,25 @@
             <!-- Booking Form -->
             <div class="col-lg-8">
                 <div class="booking-form-card" data-aos="fade-up">
-                    <h3 class="mb-4">Schedule Your Lesson</h3>
+                    <h3 class="fw-800 mb-4">Schedule Your Lesson</h3>
 
                     <!-- Step Indicator -->
-                    <div class="booking-steps mb-4">
+                    <div class="booking-steps mb-5">
                         <div class="step active" data-step="1">
-                            <span class="step-number">1</span>
-                            <span class="step-label">Service</span>
+                            <span class="step-num">1</span>
+                            <span class="step-lbl">Service</span>
                         </div>
                         <div class="step" data-step="2">
-                            <span class="step-number">2</span>
-                            <span class="step-label">Date & Time</span>
+                            <span class="step-num">2</span>
+                            <span class="step-lbl">Time</span>
                         </div>
                         <div class="step" data-step="3">
-                            <span class="step-number">3</span>
-                            <span class="step-label">Details</span>
+                            <span class="step-num">3</span>
+                            <span class="step-lbl">Details</span>
                         </div>
                         <div class="step" data-step="4">
-                            <span class="step-number">4</span>
-                            <span class="step-label">Payment</span>
+                            <span class="step-num">4</span>
+                            <span class="step-lbl">Pay</span>
                         </div>
                     </div>
 
@@ -50,36 +51,39 @@
 
                         <!-- Step 1: Service Selection -->
                         <div class="booking-step" id="step1">
-                            <h4 class="step-title">Select a Service</h4>
+                            <h4 class="fw-800 mb-4 h5">Select a Service</h4>
 
                             <!-- Service Category Filter -->
                             <div class="mb-4">
-                                <label class="form-label fw-bold">Service Type</label>
-                                <div class="category-buttons">
-                                    <button type="button" class="category-btn active" data-category="all">All Services</button>
+                                <div class="category-buttons d-flex gap-2 flex-wrap">
+                                    <button type="button" class="btn btn-outline-slate btn-sm rounded-pill px-4 active" data-category="all">All</button>
                                     @foreach($categories as $category)
-                                    <button type="button" class="category-btn" data-category="{{ $category->id }}">{{ $category->name }}</button>
+                                    <button type="button" class="btn btn-outline-slate btn-sm rounded-pill px-4" data-category="{{ $category->id }}">{{ $category->name }}</button>
                                     @endforeach
                                 </div>
                             </div>
 
                             <!-- Services Grid -->
-                            <div class="services-grid">
+                            <div class="services-list d-grid gap-3">
                                 @foreach($services as $service)
-                                <div class="service-option" data-category="{{ $service->category_id }}">
-                                    <input type="radio" name="service_id" id="service_{{ $service->id }}" value="{{ $service->id }}" data-price="{{ $service->price }}" data-duration="{{ $service->duration_minutes }}" {{ request('service') == $service->id ? 'checked' : '' }}>
-                                    <label for="service_{{ $service->id }}">
-                                        <div class="service-info">
-                                            <h5>{{ $service->name }}</h5>
-                                            <p class="text-muted small mb-2">{{ Str::limit($service->description, 80) }}</p>
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <span class="price">${{ number_format($service->price, 0) }}</span>
-                                                @if($service->duration_minutes)
-                                                <span class="duration"><i class="fas fa-clock me-1"></i>{{ $service->duration_minutes }} mins</span>
-                                                @endif
+                                <div class="service-option-item" data-category="{{ $service->category_id }}">
+                                    <input type="radio" name="service_id" id="service_{{ $service->id }}" class="btn-check" value="{{ $service->id }}" data-price="{{ $service->price }}" data-duration="{{ $service->duration_minutes }}" {{ request('service') == $service->id ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-slate w-100 text-start p-4 rounded-4 shadow-sm" for="service_{{ $service->id }}">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="fw-800 mb-1 h5">{{ $service->name }}</h6>
+                                                <p class="text-muted small mb-0">{{ Str::limit($service->description, 80) }}</p>
+                                                <div class="mt-2 d-flex gap-3">
+                                                    @if($service->duration_minutes)
+                                                    <span class="small fw-bold text-primary"><i class="fas fa-clock me-1"></i>{{ $service->duration_minutes }}m</span>
+                                                    @endif
+                                                    <span class="small fw-bold text-secondary"><i class="fas fa-tag me-1"></i>${{ number_format($service->price, 0) }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="check-mark bg-primary rounded-circle text-white d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; opacity: 0;">
+                                                <i class="fas fa-check small"></i>
                                             </div>
                                         </div>
-                                        <i class="fas fa-check-circle check-icon"></i>
                                     </label>
                                 </div>
                                 @endforeach
@@ -87,26 +91,38 @@
 
                             <!-- Packages Option -->
                             @if($packages->count() > 0)
-                            <div class="mt-4 pt-4 border-top">
-                                <h5>Or Choose a Package</h5>
-                                <div class="packages-grid">
+                            <div class="mt-5 pt-5 border-top">
+                                <h5 class="fw-800 mb-4 h6 text-uppercase text-slate-400" style="letter-spacing: 0.1em;">Or Choose a Package</h5>
+                                <div class="packages-list row g-3">
                                     @foreach($packages->take(3) as $package)
-                                    <div class="package-option">
-                                        <input type="radio" name="package_id" id="package_{{ $package->id }}" value="{{ $package->id }}" data-price="{{ $package->price }}" {{ request('package') == $package->id ? 'checked' : '' }}>
-                                        <label for="package_{{ $package->id }}">
-                                            <div class="package-info">
-                                                <h6>{{ $package->name }}</h6>
-                                                <span class="price">${{ number_format($package->price, 0) }}</span>
-                                                @if($package->duration_hours)
-                                                <span class="small text-muted d-block">{{ $package->duration_hours }} hours</span>
-                                                @endif
-                                            </div>
-                                            <i class="fas fa-check-circle check-icon"></i>
-                                        </label>
+                                    <div class="col-md-4">
+                                        <div class="package-option-item h-100">
+                                            <input type="radio" name="package_id" id="package_{{ $package->id }}" class="btn-check" value="{{ $package->id }}" data-price="{{ $package->price }}" {{ request('package') == $package->id ? 'checked' : '' }}>
+                                            <label class="btn btn-outline-slate w-100 text-start p-4 rounded-4 shadow-sm h-100 d-flex flex-column justify-content-between position-relative" for="package_{{ $package->id }}">
+                                                <div>
+                                                    <h6 class="fw-800 mb-2">{{ $package->name }}</h6>
+                                                    <div class="d-flex align-items-baseline gap-1">
+                                                        <span class="fs-4 fw-800 text-primary">${{ number_format($package->price, 0) }}</span>
+                                                        @if($package->duration_hours)
+                                                        <span class="small text-slate-500">/ {{ $package->duration_hours }}h</span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="check-mark-wrapper position-absolute" style="top: 15px; right: 15px;">
+                                                    <div class="check-mark bg-primary rounded-circle text-white d-flex align-items-center justify-content-center" style="width: 20px; height: 20px; opacity: 0; transition: opacity 0.2s;">
+                                                        <i class="fas fa-check" style="font-size: 10px;"></i>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
                                     </div>
                                     @endforeach
                                 </div>
-                                <a href="{{ route('lesson-packages') }}" class="btn btn-link mt-2">View all packages <i class="fas fa-arrow-right ms-1"></i></a>
+                                <div class="mt-4">
+                                    <a href="{{ route('lesson-packages') }}" class="text-primary fw-bold small text-decoration-none d-inline-flex align-items-center">
+                                        View all packages <i class="fas fa-arrow-right ms-2"></i>
+                                    </a>
+                                </div>
                             </div>
                             @endif
 
@@ -128,6 +144,17 @@
                                     <option value="">Select a location</option>
                                     @foreach($locations as $location)
                                     <option value="{{ $location->id }}">{{ $location->name }} - {{ $location->address }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Instructor Selection -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Preferred Instructor (Optional)</label>
+                                <select name="instructor_id" id="instructorSelect" class="form-select form-select-lg">
+                                    <option value="">Any Instructor</option>
+                                    @foreach($instructors as $instructor)
+                                    <option value="{{ $instructor->id }}">{{ $instructor->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -231,6 +258,10 @@
                                 <div class="summary-item">
                                     <span>Location:</span>
                                     <span id="summaryLocation">-</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Instructor:</span>
+                                    <span id="summaryInstructor">-</span>
                                 </div>
                                 <div class="summary-total">
                                     <span>Total:</span>
@@ -340,221 +371,143 @@
     .booking-form-card {
         background: white;
         border-radius: 20px;
-        padding: 2rem;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        padding: 3rem;
+        border: 1px solid var(--slate-200);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
     }
 
     .booking-steps {
         display: flex;
         justify-content: space-between;
         position: relative;
-        padding: 0 20px;
     }
 
     .booking-steps::before {
         content: '';
         position: absolute;
-        top: 15px;
-        left: 50px;
-        right: 50px;
+        top: 20px;
+        left: 0;
+        right: 0;
         height: 2px;
-        background: #e0e0e0;
+        background: var(--slate-100);
+        z-index: 0;
     }
 
-    .booking-steps .step {
+    .step {
         display: flex;
         flex-direction: column;
         align-items: center;
-        position: relative;
         z-index: 1;
+        background: white;
+        padding: 0 10px;
     }
 
-    .step-number {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        background: #e0e0e0;
-        color: #666;
+    .step-num {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: var(--slate-50);
+        color: var(--slate-400);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 600;
+        font-weight: 800;
+        margin-bottom: 8px;
+        border: 2px solid var(--slate-100);
         transition: all 0.3s ease;
     }
 
-    .step.active .step-number,
-    .step.completed .step-number {
+    .step.active .step-num {
         background: var(--primary-color);
-        color: white;
-    }
-
-    .step-label {
-        font-size: 12px;
-        margin-top: 5px;
-        color: #666;
-    }
-
-    .step.active .step-label {
-        color: var(--primary-color);
-        font-weight: 600;
-    }
-
-    .step-title {
-        margin-bottom: 1.5rem;
-        padding-bottom: 1rem;
-        border-bottom: 2px solid #f0f0f0;
-    }
-
-    .category-buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-
-    .category-btn {
-        padding: 8px 20px;
-        border: 2px solid #e0e0e0;
-        border-radius: 25px;
-        background: white;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .category-btn:hover,
-    .category-btn.active {
+        color: var(--secondary-color);
         border-color: var(--primary-color);
-        background: var(--primary-color);
-        color: white;
+        transform: scale(1.1);
     }
 
-    .services-grid {
-        display: grid;
-        gap: 15px;
+    .step.completed .step-num {
+        background: var(--secondary-color);
+        color: var(--white);
+        border-color: var(--secondary-color);
     }
 
-    .service-option input {
-        display: none;
-    }
-
-    .service-option label {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1rem 1.5rem;
-        border: 2px solid #e0e0e0;
-        border-radius: 12px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .service-option label:hover {
-        border-color: var(--primary-color);
-    }
-
-    .service-option input:checked + label {
-        border-color: var(--primary-color);
-        background: rgba(52, 152, 219, 0.05);
-    }
-
-    .service-option .check-icon {
-        color: var(--primary-color);
-        font-size: 1.5rem;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .service-option input:checked + label .check-icon {
-        opacity: 1;
-    }
-
-    .service-info h5 {
-        margin-bottom: 0.25rem;
-    }
-
-    .service-info .price {
-        font-size: 1.25rem;
+    .step-lbl {
+        font-size: 0.75rem;
         font-weight: 700;
-        color: var(--primary-color);
+        color: var(--slate-400);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
 
-    .service-info .duration {
-        color: #666;
-        font-size: 0.9rem;
+    .step.active .step-lbl { color: var(--secondary-color); }
+
+    .btn-outline-slate {
+        border: 1px solid var(--slate-200);
+        color: var(--secondary-color);
     }
 
-    .packages-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 15px;
+    .btn-outline-slate:hover {
+        background: var(--slate-50);
+        border-color: var(--slate-300);
     }
 
-    .package-option input {
-        display: none;
+    .btn-check:checked + label {
+        border-color: var(--primary-color) !important;
+        background-color: rgba(245, 158, 11, 0.08) !important;
+        box-shadow: 0 8px 20px rgba(245, 158, 11, 0.15) !important;
     }
 
-    .package-option label {
-        display: block;
-        padding: 1rem;
-        border: 2px solid #e0e0e0;
-        border-radius: 12px;
-        cursor: pointer;
-        text-align: center;
-        transition: all 0.3s ease;
+    .btn-check:checked + label .check-mark {
+        opacity: 1 !important;
     }
 
-    .package-option label:hover {
-        border-color: var(--primary-color);
+    /* Force hide standard radio buttons if btn-check is failing */
+    input.btn-check {
+        display: none !important;
     }
 
-    .package-option input:checked + label {
-        border-color: var(--primary-color);
-        background: rgba(52, 152, 219, 0.05);
+    .btn-outline-slate {
+        border: 2px solid var(--slate-100) !important;
+        background: white !important;
+        color: var(--secondary-color) !important;
+        display: block !important;
+        position: relative;
+        transition: all 0.3s ease !important;
     }
 
-    .package-option .check-icon {
-        display: none;
-    }
-
-    .package-option input:checked + label .check-icon {
-        display: block;
-        color: var(--primary-color);
-    }
-
-    .package-info .price {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--primary-color);
-    }
-
-    .time-slots-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-        gap: 10px;
+    .btn-outline-slate:hover {
+        border-color: var(--slate-200) !important;
+        background: var(--slate-50) !important;
     }
 
     .time-slot {
-        padding: 10px 15px;
-        border: 2px solid #e0e0e0;
-        border-radius: 8px;
+        background: white;
+        border: 1px solid var(--slate-200);
+        border-radius: 12px;
+        padding: 1rem;
         text-align: center;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
     }
 
     .time-slot:hover {
         border-color: var(--primary-color);
+        background: var(--slate-50);
     }
 
     .time-slot.selected {
-        border-color: var(--primary-color);
-        background: var(--primary-color);
+        background: var(--secondary-color);
+        border-color: var(--secondary-color);
         color: white;
     }
 
+    .time-slot.selected .instructor-name {
+        color: var(--slate-400);
+    }
+
     .time-slot.unavailable {
-        background: #f5f5f5;
-        color: #999;
+        opacity: 0.4;
         cursor: not-allowed;
+        background: var(--slate-50);
     }
 
     .step-actions {
@@ -776,17 +729,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Category Filter
-    document.querySelectorAll('.category-btn').forEach(btn => {
+    document.querySelectorAll('.category-buttons button').forEach(btn => {
         btn.addEventListener('click', function() {
-            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.category-buttons button').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
 
             const category = this.dataset.category;
-            document.querySelectorAll('.service-option').forEach(option => {
+            document.querySelectorAll('.service-option-item').forEach(option => {
                 if (category === 'all' || option.dataset.category === category) {
-                    option.style.display = 'block';
+                    option.classList.remove('d-none');
                 } else {
-                    option.style.display = 'none';
+                    option.classList.add('d-none');
                 }
             });
         });
@@ -814,27 +767,40 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     calendar.render();
 
+    // Instructor Select Listener
+    document.getElementById('instructorSelect').addEventListener('change', function() {
+        const selectedDate = document.getElementById('selectedDate').value;
+        if (selectedDate) {
+            loadTimeSlots(selectedDate);
+        }
+    });
+
     // Load time slots for selected date
     function loadTimeSlots(date) {
         const locationId = document.getElementById('locationSelect').value;
         const serviceId = document.querySelector('input[name="service_id"]:checked')?.value;
+        const instructorId = document.getElementById('instructorSelect').value;
 
         document.getElementById('selectedDate').value = date;
         document.getElementById('timeSlotsContainer').classList.remove('d-none');
         document.getElementById('timeSlots').innerHTML = '<div class="text-center py-3"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
 
-        fetch(`{{ url('book-online/slots') }}?date=${date}&location_id=${locationId}&service_id=${serviceId}`)
+        fetch(`{{ url('book-online/slots') }}?date=${date}&location_id=${locationId}&service_id=${serviceId}&instructor_id=${instructorId}`)
             .then(response => response.json())
             .then(data => {
                 let html = '';
                 if (data.slots && data.slots.length > 0) {
                     data.slots.forEach(slot => {
                         const isAvailable = slot.is_available !== false;
+                        const photoHtml = slot.instructor_photo ? `<img src="${slot.instructor_photo}" class="instructor-img" alt="${slot.instructor_name}">` : '';
                         html += `<div class="time-slot ${isAvailable ? '' : 'unavailable'}" 
                                      data-slot-id="${slot.id}" 
                                      data-time="${slot.start_time}"
+                                     data-instructor="${slot.instructor_name}"
                                      ${isAvailable ? '' : 'title="Not available"'}>
-                                    ${slot.start_time}
+                                    ${photoHtml}
+                                    <div class="slot-time">${slot.start_time}</div>
+                                    <div class="instructor-name text-truncate w-100 px-1">${slot.instructor_name}</div>
                                 </div>`;
                     });
                 } else {
@@ -849,6 +815,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         this.classList.add('selected');
                         document.getElementById('selectedSlotId').value = this.dataset.slotId;
                         document.getElementById('selectedTime').value = this.dataset.time;
+                        // Store instructor name directly on the element dataset if needed
                     });
                 });
             })
@@ -862,18 +829,29 @@ document.addEventListener('DOMContentLoaded', function() {
         const serviceEl = document.querySelector('input[name="service_id"]:checked');
         const packageEl = document.querySelector('input[name="package_id"]:checked');
         const locationEl = document.getElementById('locationSelect');
+        const instructorEl = document.getElementById('instructorSelect');
+        const slotEl = document.querySelector('.time-slot.selected');
 
         if (serviceEl) {
-            document.getElementById('summaryService').textContent = serviceEl.closest('.service-option').querySelector('h5').textContent;
+            document.getElementById('summaryService').textContent = serviceEl.closest('.service-option-item').querySelector('h6').textContent;
             document.getElementById('summaryTotal').textContent = '$' + serviceEl.dataset.price;
         } else if (packageEl) {
-            document.getElementById('summaryService').textContent = packageEl.closest('.package-option').querySelector('h6').textContent;
+            document.getElementById('summaryService').textContent = packageEl.closest('.package-option-item').querySelector('h6').textContent;
             document.getElementById('summaryTotal').textContent = '$' + packageEl.dataset.price;
         }
 
         document.getElementById('summaryDate').textContent = document.getElementById('selectedDate').value || '-';
         document.getElementById('summaryTime').textContent = document.getElementById('selectedTime').value || '-';
         document.getElementById('summaryLocation').textContent = locationEl.options[locationEl.selectedIndex]?.text || '-';
+        document.getElementById('summaryInstructor').textContent = instructorEl.options[instructorEl.selectedIndex]?.text || 'Any Instructor';
+        
+        if (slotEl && slotEl.dataset.instructor) {
+             // If we picked a specific slot with a known instructor, maybe update summary to show THAT instructor instead of "Any"?
+             // But for now, let's just show what was selected in dropdown.
+             if (instructorEl.value === "") {
+                 document.getElementById('summaryInstructor').textContent = slotEl.dataset.instructor;
+             }
+        }
     }
 
     // Form Submission with Stripe

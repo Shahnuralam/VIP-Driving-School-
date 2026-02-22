@@ -1,59 +1,119 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# VIP Driving School Hobart - Booking System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This is a comprehensive booking and management system for VIP Driving School Hobart, built with Laravel. It features instructor management, availability slot management, automated booking flows with Stripe payment integration, and a dedicated admin dashboard.
 
-## About Laravel
+## 🚀 Local Development Setup
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Follow these steps to get the project running on your local machine.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Prerequisites
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Ensure you have the following installed:
+- PHP >= 8.2
+- Composer
+- Node.js & NPM
+- MySQL/MariaDB (Or WAMP/XAMPP for Windows)
 
-## Learning Laravel
+### 1. Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Clone the repository and navigate to the backend directory:
+```bash
+cd vipdrivingschoolhobart/backend
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Install PHP dependencies:
+```bash
+composer install
+```
 
-## Laravel Sponsors
+Install Javascript dependencies:
+```bash
+npm install
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 2. Configuration
 
-### Premium Partners
+Create your environment file:
+```bash
+cp .env.example .env
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Generate the application key:
+```bash
+php artisan key:generate
+```
 
-## Contributing
+### 3. Database Setup
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+1. Create a database in MySQL (e.g., `vip_driving_school`).
+2. Update your `.env` file with the database credentials:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=vip_driving_school
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-## Code of Conduct
+Run migrations and seed the database:
+```bash
+php artisan migrate --seed
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 4. Storage & Assets
 
-## Security Vulnerabilities
+Link the storage directory to the public folder:
+```bash
+php artisan storage:link
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Build the assets:
+```bash
+npm run dev
+# OR for production
+npm run build
+```
 
-## License
+### 5. Running the Application
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Start the local development server:
+```bash
+php artisan serve
+```
+*Note: If you need to run it on a specific IP for testing on other devices (e.g., mobile), use:*
+```bash
+php artisan serve --host=192.168.10.234 --port=8000
+```
+
+The application will be accessible at `http://localhost:8000` (or your specified IP).
+
+---
+
+## 🛠️ Key Features
+
+- **Dynamic Booking Form**: Multi-step booking process with service, location, and instructor selection.
+- **Instructor Management**: Manage profiles, photos, and specific availability.
+- **Availability Groups**: Synchronized slot management for multiple instructors.
+- **Stripe Integration**: Secure payment processing for bookings.
+- **Admin Dashboard**: AdminLTE based dashboard for managing all school operations.
+
+## 🔑 Admin Access
+
+Default admin credentials (if seeded):
+- **URL**: `http://localhost:8000/admin`
+- **Email**: `admin@vipdrivingschool.com.au`
+- **Password**: `password123` (check `UserSeeder.php` for details)
+
+## 📦 Commands Reference
+
+| Command | Description |
+|---------|-------------|
+| `php artisan serve` | Starts the dev server |
+| `npm run dev` | Starts Vite for asset hot-reloading |
+| `php artisan migrate` | Runs pending migrations |
+| `php artisan db:seed` | Fills database with initial data |
+| `php artisan route:list` | View all registered routes |
+
+---
+© 2026 VIP Driving School Hobart. All rights reserved.
