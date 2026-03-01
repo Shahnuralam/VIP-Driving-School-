@@ -17,6 +17,33 @@
 @stop
 
 @section('content')
+@if(session('success'))
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ session('success') }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+@endif
+
+@if(session('warning'))
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{ session('warning') }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+@endif
+
+@if(session('error'))
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{ session('error') }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+@endif
+
 <div class="card">
     <div class="card-header">
         <form action="{{ route('admin.bookings.index') }}" method="GET" class="row">
@@ -51,11 +78,33 @@
                 <a href="{{ route('admin.bookings.index') }}" class="btn btn-outline-secondary">Reset</a>
             </div>
         </form>
+        <hr class="my-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">
+                <i class="fas fa-info-circle mr-1"></i>
+                Bulk and single delete are available for cancelled appointments only.
+            </small>
+            <button type="submit"
+                    form="bulkDeleteForm"
+                    id="bulkDeleteBtn"
+                    class="btn btn-danger btn-sm"
+                    disabled
+                    onclick="return confirm('Delete selected appointments permanently? This action cannot be undone.');">
+                <i class="fas fa-trash mr-1"></i> Delete Selected (<span id="selectedCount">0</span>)
+            </button>
+        </div>
     </div>
     <div class="card-body table-responsive p-0">
+        <form id="bulkDeleteForm" action="{{ route('admin.bookings.bulk-destroy') }}" method="POST" class="d-none">
+            @csrf
+            @method('DELETE')
+        </form>
         <table class="table table-hover text-nowrap">
             <thead>
                 <tr>
+                    <th style="width: 40px;">
+                        <input type="checkbox" id="selectAllBookings" title="Select all">
+                    </th>
                     <th>Reference</th>
                     <th>Customer</th>
                     <th>Service</th>
@@ -69,6 +118,14 @@
             <tbody>
                 @forelse($bookings as $booking)
                 <tr>
+                    <td>
+                        <input type="checkbox"
+                               name="booking_ids[]"
+                               value="{{ $booking->id }}"
+                               form="bulkDeleteForm"
+                               class="booking-checkbox"
+                               title="Select appointment {{ $booking->booking_reference }}">
+                    </td>
                     <td><a href="{{ route('admin.bookings.show', $booking) }}">{{ $booking->booking_reference }}</a></td>
                     <td>
                         <strong>{{ $booking->customer_name }}</strong><br>
@@ -83,14 +140,33 @@
                     <td><span class="badge badge-{{ $booking->status_badge }}">{{ ucfirst($booking->status) }}</span></td>
                     <td><span class="badge badge-{{ $booking->payment_badge }}">{{ ucfirst($booking->payment_status) }}</span></td>
                     <td>
-                        <a href="{{ route('admin.bookings.show', $booking) }}" class="btn btn-sm btn-info">
-                            <i class="fas fa-eye"></i>
-                        </a>
+                        <div class="d-flex align-items-center">
+                            <a href="{{ route('admin.bookings.show', $booking) }}" class="btn btn-sm btn-info mr-1" title="View">
+                                <i class="fas fa-eye"></i>
+                            </a>
+
+                            @if($booking->status === 'cancelled')
+                                <form action="{{ route('admin.bookings.destroy', $booking) }}"
+                                      method="POST"
+                                      onsubmit="return confirm('Delete appointment {{ $booking->booking_reference }} permanently?');"
+                                      class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            @else
+                                <button type="button" class="btn btn-sm btn-outline-secondary" disabled title="Only cancelled appointments can be deleted">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            @endif
+                        </div>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="8" class="text-center text-muted">No appointments found</td>
+                    <td colspan="9" class="text-center text-muted">No appointments found</td>
                 </tr>
                 @endforelse
             </tbody>
@@ -100,4 +176,41 @@
         {{ $bookings->withQueryString()->links('pagination::bootstrap-4') }}
     </div>
 </div>
+@stop
+
+@section('js')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const selectAll = document.getElementById('selectAllBookings');
+    const checkboxes = Array.from(document.querySelectorAll('.booking-checkbox'));
+    const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+    const selectedCount = document.getElementById('selectedCount');
+
+    function refreshSelectionState() {
+        const checked = checkboxes.filter(cb => cb.checked).length;
+        bulkDeleteBtn.disabled = checked === 0;
+        selectedCount.textContent = checked;
+
+        if (checkboxes.length > 0) {
+            selectAll.checked = checked === checkboxes.length;
+            selectAll.indeterminate = checked > 0 && checked < checkboxes.length;
+        }
+    }
+
+    if (selectAll) {
+        selectAll.addEventListener('change', function () {
+            checkboxes.forEach(cb => {
+                cb.checked = selectAll.checked;
+            });
+            refreshSelectionState();
+        });
+    }
+
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', refreshSelectionState);
+    });
+
+    refreshSelectionState();
+});
+</script>
 @stop

@@ -30,6 +30,10 @@ class DashboardController extends Controller
         $pendingBookings = Booking::pending()->count();
         $newContacts = ContactSubmission::new()->count();
 
+        // All-time KPI cards
+        $totalAppointments = Booking::count();
+        $totalRevenue = Booking::paid()->sum('amount');
+
         // Recent bookings
         $recentBookings = Booking::with(['service', 'location'])
             ->orderByDesc('created_at')
@@ -61,6 +65,8 @@ class DashboardController extends Controller
             'monthRevenue',
             'pendingBookings',
             'newContacts',
+            'totalAppointments',
+            'totalRevenue',
             'recentBookings',
             'upcomingBookings',
             'totalServices',

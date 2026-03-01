@@ -124,14 +124,19 @@
                     <div class="form-group">
                         <label for="image">Location Image</label>
                         @if($location->image)
-                            <div class="mb-2">
-                                <img src="{{ asset('storage/' . $location->image) }}" alt="Current image" class="img-thumbnail" style="max-width: 150px;">
+                            <div class="mb-3">
+                                <img src="{{ Storage::url($location->image) }}" alt="{{ $location->name }}" class="img-thumbnail d-block" style="max-width: 200px; max-height: 200px;">
+                                <small class="text-muted d-block mt-1">Current image</small>
                             </div>
                         @endif
-                        <input type="file" name="image" id="image" class="form-control-file @error('image') is-invalid @enderror">
-                        @error('image')
-                            <span class="invalid-feedback">{{ $message }}</span>
-                        @enderror
+                        <div class="custom-file">
+                            <input type="file" name="image" id="image" class="custom-file-input @error('image') is-invalid @enderror" accept="image/*">
+                            <label class="custom-file-label" for="image">Choose file</label>
+                            @error('image')
+                                <span class="invalid-feedback d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <small class="form-text text-muted">Upload a new image to replace the current one. Accepted formats: JPG, PNG, GIF (Max: 2MB)</small>
                     </div>
 
                     <div class="form-group">
@@ -161,4 +166,16 @@
         </div>
     </form>
 </div>
+@stop
+
+
+@section('js')
+<script>
+// Show selected filename in custom file input
+document.querySelector('.custom-file-input').addEventListener('change', function(e) {
+    var fileName = e.target.files[0]?.name || 'Choose file';
+    var label = e.target.nextElementSibling;
+    label.textContent = fileName;
+});
+</script>
 @stop

@@ -59,6 +59,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('bookings/calendar/events', [BookingController::class, 'calendarEvents'])->name('bookings.calendar.events');
     Route::get('bookings/pending', [BookingController::class, 'pending'])->name('bookings.pending');
     Route::get('bookings/export', [BookingController::class, 'export'])->name('bookings.export');
+    Route::delete('bookings/bulk-destroy', [BookingController::class, 'bulkDestroy'])->name('bookings.bulk-destroy');
     Route::patch('bookings/{booking}/status', [BookingController::class, 'updateStatus'])->name('bookings.update-status');
     Route::resource('bookings', BookingController::class)->only(['index', 'show', 'destroy']);
 

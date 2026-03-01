@@ -8,6 +8,7 @@ use App\Models\Package;
 use App\Models\Location;
 use App\Models\AvailabilitySlot;
 use App\Models\Booking;
+use App\Models\Customer;
 use App\Models\InfoCard;
 use App\Models\ServiceCategory;
 use App\Models\Setting;
@@ -17,6 +18,8 @@ use Stripe\Stripe;
 use Stripe\PaymentIntent;
 use App\Mail\BookingConfirmation;
 use App\Mail\AdminBookingNotification;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
 use App\Models\Instructor;
@@ -63,6 +66,13 @@ class BookingController extends Controller
         $serviceId = $request->get('service_id');
         $instructorId = $request->get('instructor_id');
 
+        \Log::info('Getting slots', [
+            'date' => $date,
+            'location_id' => $locationId,
+            'service_id' => $serviceId,
+            'instructor_id' => $instructorId
+        ]);
+
         if (!$date) {
             return response()->json(['slots' => []]);
         }
@@ -90,13 +100,11 @@ class BookingController extends Controller
 
         if ($instructorId) {
             $query->where('instructor_id', $instructorId);
-        } else {
-            // If checking "Any" instructor, we include Global (null) and Specific slots
-            // This is default behavior if we don't filter.
-             // However, business logic might change. For now, "Any" means show all available options.
         }
 
         $slots = $query->orderBy('start_time')->get();
+        
+        \Log::info('Found slots', ['count' => $slots->count()]);
 
         $formattedSlots = $slots->map(function ($slot) {
             return [
@@ -105,6 +113,9 @@ class BookingController extends Controller
                 'end_time' => Carbon::parse($slot->end_time)->format('g:i A'),
                 'is_available' => $slot->hasAvailability(),
                 'instructor_name' => $slot->instructor ? $slot->instructor->name : 'Any Instructor',
+                'instructor_id' => $slot->instructor_id,
+                'location_id' => $slot->location_id,
+                'location_name' => $slot->location ? $slot->location->name : 'Any Location',
                 'instructor_photo' => $slot->instructor ? $slot->instructor->getPhotoUrl() : null,
             ];
         });
@@ -173,11 +184,13 @@ class BookingController extends Controller
 
     public function store(Request $request)
     {
+        $authCustomer = Auth::guard('customer')->user();
+
         $validated = $request->validate([
             'service_id' => 'nullable|exists:services,id',
             'package_id' => 'nullable|exists:packages,id',
             'location_id' => 'nullable|exists:locations,id',
-            'slot_id' => 'nullable|exists:availability_slots,id',
+            'slot_id' => 'required|exists:availability_slots,id',
             'booking_date' => 'required|date',
             'booking_time' => 'required',
             'first_name' => 'required|string|max:100',
@@ -189,15 +202,30 @@ class BookingController extends Controller
             'transmission' => 'required|in:auto,manual',
             'notes' => 'nullable|string|max:1000',
             'payment_method' => 'required|string',
+            'create_account' => 'nullable|boolean',
+            'account_password' => 'nullable|required_if:create_account,1|string|min:8|confirmed',
         ]);
 
+        $shouldCreateAccount = $request->boolean('create_account') && !$authCustomer;
+
+        if ($shouldCreateAccount && Customer::where('email', $validated['email'])->exists()) {
+            return back()->withErrors([
+                'email' => 'An account already exists with this email. Please login first to manage this booking from your dashboard.'
+            ])->withInput();
+        }
+
+        // Frontend sends a user-friendly time (e.g. "9:00 AM"), but bookings.booking_time is a TIME column.
+        // Normalize here so booking inserts always use DB-safe H:i:s format.
+        try {
+            $validated['booking_time'] = Carbon::parse($validated['booking_time'])->format('H:i:s');
+        } catch (\Exception $e) {
+            return back()->withErrors(['booking_time' => 'Please select a valid booking time.'])->withInput();
+        }
+
         // Get the availability slot if provided
-        $slot = null;
-        if ($validated['slot_id']) {
-            $slot = AvailabilitySlot::find($validated['slot_id']);
-            if ($slot && !$slot->hasAvailability()) {
-                return back()->withErrors(['slot_id' => 'This time slot is no longer available.']);
-            }
+        $slot = AvailabilitySlot::find($validated['slot_id']);
+        if (!$slot || !$slot->hasAvailability()) {
+            return back()->withErrors(['slot_id' => 'This time slot is no longer available.']);
         }
 
         // Calculate amount
@@ -248,8 +276,25 @@ class BookingController extends Controller
                 return back()->withErrors(['payment' => 'Payment failed. Please try again.']);
             }
 
+            $bookingCustomer = $authCustomer;
+            $customerCreatedNow = false;
+
+            if ($shouldCreateAccount) {
+                $bookingCustomer = Customer::create([
+                    'name' => $customerName,
+                    'email' => $validated['email'],
+                    'phone' => $validated['phone'],
+                    'license_number' => $validated['licence_number'] ?? null,
+                    'address' => $validated['pickup_address'] ?? null,
+                    'preferred_transmission' => $validated['transmission'],
+                    'password' => Hash::make($validated['account_password']),
+                ]);
+                $customerCreatedNow = true;
+            }
+
             // Create booking
             $booking = Booking::create([
+                'customer_id' => $bookingCustomer?->id,
                 'service_id' => $validated['service_id'] ?? null,
                 'package_id' => $validated['package_id'] ?? null,
                 'location_id' => $validated['location_id'] ?? ($slot ? $slot->location_id : null),
@@ -290,6 +335,11 @@ class BookingController extends Controller
                 }
             } catch (\Exception $e) {
                 \Log::error('Failed to send admin booking notification: ' . $e->getMessage());
+            }
+
+            if ($customerCreatedNow) {
+                $bookingCustomer->update(['last_login_at' => now()]);
+                Auth::guard('customer')->login($bookingCustomer);
             }
 
             return redirect()->route('booking.confirmation', $booking->booking_reference);

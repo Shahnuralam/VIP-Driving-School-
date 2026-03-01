@@ -12,6 +12,20 @@
 @stop
 
 @section('content')
+@if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ session('success') }}
+    </div>
+@endif
+
+@if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ session('error') }}
+    </div>
+@endif
+
 <div class="card">
     <div class="card-body table-responsive p-0">
         <table class="table table-hover">
@@ -41,12 +55,12 @@
                         <a href="{{ route('admin.service-categories.edit', $category) }}" class="btn btn-sm btn-info">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <form action="{{ route('admin.service-categories.destroy', $category) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?')">
+                        <button type="button" class="btn btn-sm btn-danger" onclick="deleteCategory({{ $category->id }})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <form id="delete-form-{{ $category->id }}" action="{{ route('admin.service-categories.destroy', $category) }}" method="POST" style="display: none;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger">
-                                <i class="fas fa-trash"></i>
-                            </button>
                         </form>
                     </td>
                 </tr>
@@ -62,4 +76,57 @@
         {{ $categories->links('pagination::bootstrap-4') }}
     </div>
 </div>
+@stop
+
+
+@section('js')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function deleteCategory(id) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Get CSRF token
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            // Send DELETE request via fetch
+            fetch('{{ url("admin/service-categories") }}/' + id, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': token,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else {
+                    return response.json();
+                }
+            })
+            .then(data => {
+                if (data && data.success) {
+                    Swal.fire('Deleted!', data.message, 'success').then(() => {
+                        window.location.reload();
+                    });
+                } else if (data && data.error) {
+                    Swal.fire('Error!', data.error, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire('Error!', 'Something went wrong. Please try again.', 'error');
+            });
+        }
+    });
+}
+</script>
 @stop

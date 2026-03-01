@@ -7,7 +7,7 @@
 <section class="page-header">
     <div class="container" data-aos="fade-up">
         <span class="section-tag" style="color: var(--primary-color);">Reservation</span>
-        <h1>Book Online</h1>
+        <h1>Let's book you in...</h1>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('frontend.home') }}">Home</a></li>
@@ -17,14 +17,222 @@
     </div>
 </section>
 
+<!-- Info Section -->
+<section class="section-padding bg-light">
+    <div class="container">
+        <div class="row g-4 mb-5">
+            <div class="col-md-4" data-aos="fade-up">
+                <div class="info-box text-center h-100">
+                    <div class="info-icon mb-3">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='50' font-size='50'%3E🚗%3C/text%3E%3C/svg%3E" alt="PRND" style="width: 80px; height: 80px;">
+                    </div>
+                    <h5 class="fw-800 mb-3">Auto & Manual Transmission</h5>
+                    <p class="text-muted small mb-0">Our Lessons are held in both <strong>Automatic & Manual</strong> Transmission Vehicles.</p>
+                    <p class="text-muted small mt-2"><strong>Please ensure you book the correct Lesson Type.</strong></p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="info-box text-center h-100">
+                    <div class="info-icon mb-3">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='50' font-size='50'%3E📍%3C/text%3E%3C/svg%3E" alt="Location" style="width: 80px; height: 80px;">
+                    </div>
+                    <h5 class="fw-800 mb-3">Servicing Hobart & Kingston</h5>
+                    <p class="text-muted small mb-0">We service Hobart and surrounding suburbs as well as Kingston from a designated drop-off & pick-up location.</p>
+                    <p class="text-muted small mt-2">For a complete list, please check out our <a href="{{ route('frontend.home') }}" class="text-primary">Home</a> page.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="info-box text-center h-100">
+                    <div class="info-icon mb-3">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='50' font-size='50'%3E🪪%3C/text%3E%3C/svg%3E" alt="Licence" style="width: 80px; height: 80px;">
+                    </div>
+                    <h5 class="fw-800 mb-3">Valid Licence</h5>
+                    <p class="text-muted small mb-0">All Students must present a valid licence at the commencement of any lesson or P1 Assessment.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Booking Section -->
-<section class="section-padding">
+<section class="section-padding {{ request()->has('service') ? 'd-none' : '' }}">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="fw-800">Select Service Type</h2>
+        </div>
+
+        <!-- Service Type Tabs -->
+        <div class="service-tabs-container" data-aos="fade-up">
+            @php
+                $p1Category = $categories->firstWhere('slug', 'p1-assessments');
+                // Get services that belong to P1 category AND have no specific location (location_id is null)
+                $p1Services = $p1Category ? $services->where('category_id', $p1Category->id)->whereNull('location_id') : collect();
+                
+                // Check if a location is specified in the URL
+                $selectedLocationId = request()->get('location');
+                $selectedLocationServices = !empty($selectedLocationId)
+                    ? $services->where('location_id', (int) $selectedLocationId)
+                    : collect();
+                $hasSelectedLocation = !empty($selectedLocationId) && $selectedLocationServices->count() > 0;
+            @endphp
+            
+            <ul class="nav nav-tabs service-tabs justify-content-center mb-5" id="serviceTypeTabs" role="tablist">
+                <!-- P1 Assessments Tab (services with NO location = available at all locations) -->
+                @if($p1Services->count() > 0)
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {{ !$hasSelectedLocation ? 'active' : '' }}" id="p1-tab" data-bs-toggle="tab" data-bs-target="#p1-content" type="button" role="tab">
+                        P1 Assessments
+                    </button>
+                </li>
+                @endif
+
+                <!-- Location-based Tabs (services with specific location) -->
+                @foreach($locations as $index => $location)
+                    @php
+                        // Get services that have THIS specific location
+                        $locationServices = $services->where('location_id', $location->id);
+                        // Check if this location should be active (compare as strings)
+                        $isActiveLocation = $hasSelectedLocation && $selectedLocationId == $location->id;
+                        // Or if no P1 services and this is first location and no location selected
+                        $isDefaultActive = !$hasSelectedLocation && $p1Services->count() == 0 && $index == 0;
+                    @endphp
+                    @if($locationServices->count() > 0)
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link {{ ($isActiveLocation || $isDefaultActive) ? 'active' : '' }}" 
+                                id="location-{{ $location->id }}-tab" 
+                                data-bs-toggle="tab" 
+                                data-bs-target="#location-{{ $location->id }}-content" 
+                                type="button" 
+                                role="tab"
+                                aria-selected="{{ ($isActiveLocation || $isDefaultActive) ? 'true' : 'false' }}">
+                            Lessons - {{ $location->name }}
+                        </button>
+                    </li>
+                    @endif
+                @endforeach
+            </ul>
+
+            <div class="tab-content" id="serviceTypeTabContent">
+                <!-- P1 Assessments Content (services available at ALL locations) -->
+                @if($p1Services->count() > 0)
+                <div class="tab-pane fade {{ !$hasSelectedLocation ? 'show active' : '' }}" id="p1-content" role="tabpanel" aria-labelledby="p1-tab">
+                    <div class="row g-4">
+                        @foreach($p1Services as $service)
+                        <div class="col-12">
+                            <div class="service-booking-card">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        <h4 class="service-title text-danger mb-2">{{ $service->name }}</h4>
+                                        <p class="service-desc text-muted mb-3">{{ $service->description }}</p>
+                                        <div class="service-meta">
+                                            <span class="badge bg-success text-white me-2">
+                                                <i class="fas fa-map-marker-alt me-1"></i>All Locations
+                                            </span>
+                                            @if($service->duration_minutes)
+                                            <span class="badge bg-light text-dark">
+                                                <i class="fas fa-clock me-1"></i>{{ $service->duration_minutes }} mins
+                                            </span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 text-md-end">
+                                        <div class="service-price mb-3">
+                                            <span class="price-amount">${{ number_format($service->price, 0) }}</span>
+                                            @if($service->duration_minutes)
+                                            <span class="price-duration text-muted d-block">{{ $service->duration_minutes }} minutes</span>
+                                            @endif
+                                        </div>
+                                        <a href="{{ route('book-online') }}?service={{ $service->id }}" class="btn btn-dark btn-book-now">
+                                            Book Now
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
+                <!-- Location-based Content (services for specific locations) -->
+                @foreach($locations as $index => $location)
+                    @php
+                        $locationServices = $services->where('location_id', $location->id);
+                        $isActiveLocation = $hasSelectedLocation && $selectedLocationId == $location->id;
+                        $isDefaultActive = !$hasSelectedLocation && $p1Services->count() == 0 && $index == 0;
+                    @endphp
+                    @if($locationServices->count() > 0)
+                    <div class="tab-pane fade {{ ($isActiveLocation || $isDefaultActive) ? 'show active' : '' }}" 
+                         id="location-{{ $location->id }}-content" 
+                         role="tabpanel"
+                         aria-labelledby="location-{{ $location->id }}-tab">
+                        <div class="row g-4">
+                            @foreach($locationServices as $service)
+                            <div class="col-12">
+                                <div class="service-booking-card">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <h4 class="service-title text-danger mb-2">{{ $service->name }}</h4>
+                                            <p class="service-desc text-muted mb-3">{{ $service->description }}</p>
+                                            <div class="service-meta">
+                                                <span class="badge bg-success text-white me-2">
+                                                    <i class="fas fa-map-marker-alt me-1"></i>{{ $location->name }}
+                                                </span>
+                                                @if($service->duration_minutes)
+                                                <span class="badge bg-light text-dark">
+                                                    <i class="fas fa-clock me-1"></i>{{ $service->duration_minutes }} mins
+                                                </span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 text-md-end">
+                                            <div class="service-price mb-3">
+                                                <span class="price-amount">${{ number_format($service->price, 0) }}</span>
+                                            </div>
+                                            <a href="{{ route('book-online') }}?service={{ $service->id }}" class="btn btn-dark btn-book-now">
+                                                Book Now
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+                @endforeach
+            </div>
+        </div>
+
+        <div class="text-center mt-5" data-aos="fade-up">
+            <p class="lead text-muted mb-4">Our <strong>online booking tool</strong> allows you to select, <strong>schedule and securely pay for single Lessons & P1 Assessments up to 3 months in advance</strong> with confirmation provided immediately over email. 50 Minute Lessons can also be purchased in <strong>Lesson Packages</strong> which you can schedule yourself below.</p>
+            <p class="text-muted">If you're booking your P1 Assessment, please read the <a href="{{ route('p1-assessments') }}" class="text-primary fw-bold">P1 Assessments</a> page prior to making your booking to ensure you are familiar with what is required of you and what to expect.</p>
+        </div>
+
+        <div class="text-center mt-4" data-aos="fade-up">
+            <p class="text-muted small">Please also take the time to read our <a href="#" class="text-primary">Terms & Conditions</a>, <a href="#" class="text-primary">Privacy Policy</a> & <a href="#" class="text-primary">Privacy Collection Statement</a></p>
+        </div>
+    </div>
+</section>
+
+<!-- Original Booking Form (Hidden by default, shown when Book Now is clicked) -->
+<section class="section-padding {{ request()->has('service') ? '' : 'd-none' }}" id="bookingFormSection">
     <div class="container">
         <div class="row g-5">
             <!-- Booking Form -->
             <div class="col-lg-8">
                 <div class="booking-form-card" data-aos="fade-up">
                     <h3 class="fw-800 mb-4">Schedule Your Lesson</h3>
+                    
+                    @if($errors->any())
+                        <div class="alert alert-danger mb-4">
+                            <ul class="mb-0 ps-3">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
 
                     <!-- Step Indicator -->
                     <div class="booking-steps mb-5">
@@ -137,27 +345,11 @@
                         <div class="booking-step d-none" id="step2">
                             <h4 class="step-title">Select Date & Time</h4>
 
-                            <!-- Location Selection -->
-                            <div class="mb-4">
-                                <label class="form-label fw-bold">Preferred Location</label>
-                                <select name="location_id" id="locationSelect" class="form-select form-select-lg">
-                                    <option value="">Select a location</option>
-                                    @foreach($locations as $location)
-                                    <option value="{{ $location->id }}">{{ $location->name }} - {{ $location->address }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <!-- Instructor Selection -->
-                            <div class="mb-4">
-                                <label class="form-label fw-bold">Preferred Instructor (Optional)</label>
-                                <select name="instructor_id" id="instructorSelect" class="form-select form-select-lg">
-                                    <option value="">Any Instructor</option>
-                                    @foreach($instructors as $instructor)
-                                    <option value="{{ $instructor->id }}">{{ $instructor->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            <!-- Hidden fields for location and instructor (will be set from selected slot) -->
+                            <input type="hidden" name="location_id" id="locationSelect">
+                            <input type="hidden" name="instructor_id" id="instructorSelect">
+                            <input type="hidden" id="locationName">
+                            <input type="hidden" id="instructorName">
 
                             <!-- Calendar -->
                             <div class="mb-4">
@@ -205,6 +397,40 @@
                                     <label class="form-label">Phone Number *</label>
                                     <input type="tel" name="phone" class="form-control" required>
                                 </div>
+                                @if(!auth('customer')->check())
+                                <div class="col-12">
+                                    <div class="account-option-card">
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" name="create_account" id="createAccountCheck" value="1" {{ old('create_account') ? 'checked' : '' }}>
+                                            <label class="form-check-label fw-semibold" for="createAccountCheck">
+                                                Create my customer account after payment
+                                            </label>
+                                        </div>
+                                        <p class="text-muted small mb-0">
+                                            Save your booking history, manage upcoming lessons, and access your customer dashboard anytime.
+                                        </p>
+
+                                        <div id="accountPasswordFields" class="row g-3 mt-1 d-none">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Account Password *</label>
+                                                <input type="password" name="account_password" class="form-control" autocomplete="new-password" minlength="8">
+                                                <small class="text-muted">Minimum 8 characters</small>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Confirm Password *</label>
+                                                <input type="password" name="account_password_confirmation" class="form-control" autocomplete="new-password" minlength="8">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @else
+                                <div class="col-12">
+                                    <div class="account-option-card account-option-card--active">
+                                        <i class="fas fa-user-check text-success me-2"></i>
+                                        You are logged in. This booking will be saved to your customer dashboard.
+                                    </div>
+                                </div>
+                                @endif
                                 <div class="col-12">
                                     <label class="form-label">Pickup Address</label>
                                     <input type="text" name="pickup_address" class="form-control" placeholder="Enter your pickup address">
@@ -364,16 +590,211 @@
         </div>
     </div>
 </div>
+
+<!-- Booking Notice Modal -->
+<div class="modal fade" id="bookingNoticeModal" tabindex="-1" aria-labelledby="bookingNoticeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bookingNoticeModalLabel">Action Required</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="bookingNoticeModalMessage" class="mb-0"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-book" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('styles')
 <style>
+    .section-padding {
+        padding: 10px 0;
+    }
+
+    /* Info Boxes */
+    .info-box {
+        background: white;
+        border-radius: 16px;
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--slate-100);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+    }
+
+    .info-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    }
+
+    /* Service Tabs */
+    .service-tabs-container {
+        background: white;
+        border-radius: 20px;
+        padding: 1rem 1rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    .service-tabs {
+        border-bottom: none;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+
+    .service-tabs .nav-item {
+        margin-bottom: 1rem;
+    }
+
+    .service-tabs .nav-link {
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        color: #475569 !important;
+        font-weight: 600;
+        padding: 0.875rem 2rem;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+        background: white !important;
+        position: relative;
+    }
+
+    .service-tabs .nav-link:hover {
+        color: #1e293b !important;
+        border-color: #cbd5e1;
+        background: #f8fafc !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .service-tabs .nav-link.active {
+        color: white !important;
+        border-color: var(--primary-color);
+        background: var(--primary-color) !important;
+        font-weight: 700;
+        box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
+    }
+
+    /* Force text visibility */
+    .service-tabs button {
+        color: #475569 !important;
+    }
+
+    .service-tabs button.active {
+        color: white !important;
+    }
+
+    /* Service Booking Cards */
+    .service-booking-card {
+        background: white;
+        border: 2px solid var(--slate-100);
+        border-radius: 16px;
+        padding: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .service-booking-card:hover {
+        border-color: var(--primary-color);
+        box-shadow: 0 10px 25px rgba(255, 107, 0, 0.15);
+        transform: translateY(-3px);
+    }
+
+    .service-title {
+        font-weight: 800;
+        color: var(--secondary-color);
+        font-size: 1.3rem;
+    }
+
+    .service-desc {
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    .service-meta .badge {
+        font-size: 0.85rem;
+        padding: 0.5rem 0.75rem;
+        font-weight: 600;
+    }
+
+    .service-price {
+        text-align: right;
+    }
+
+    .price-amount {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        display: block;
+        line-height: 1;
+    }
+
+    .price-duration {
+        font-size: 0.9rem;
+        margin-top: 0.25rem;
+    }
+
+    .btn-book-now {
+        padding: 0.75rem 2rem;
+        font-weight: 700;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.9rem;
+    }
+
+    .btn-book-now:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    @media (max-width: 768px) {
+        .service-tabs .nav-link {
+            font-size: 0.85rem;
+            padding: 0.75rem 1rem;
+        }
+
+        .service-booking-card {
+            padding: 1.5rem;
+        }
+
+        .service-title {
+            font-size: 1.1rem;
+        }
+
+        .price-amount {
+            font-size: 2rem;
+        }
+
+        .service-price {
+            text-align: left;
+            margin-top: 1rem;
+        }
+    }
+
     .booking-form-card {
         background: white;
         border-radius: 20px;
         padding: 3rem;
         border: 1px solid var(--slate-200);
         box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+    .account-option-card {
+        background: var(--slate-50);
+        border: 1px solid var(--slate-200);
+        border-radius: 14px;
+        padding: 1rem 1.1rem;
+    }
+
+    .account-option-card--active {
+        border-color: #16a34a33;
+        background: #f0fdf4;
+        color: #166534;
+        font-weight: 600;
     }
 
     .booking-steps {
@@ -479,29 +900,40 @@
         background: var(--slate-50) !important;
     }
 
+    .time-slots-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+
     .time-slot {
         background: white;
-        border: 1px solid var(--slate-200);
+        border: 2px solid var(--slate-200);
         border-radius: 12px;
         padding: 1rem;
         text-align: center;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all 0.3s ease;
     }
 
-    .time-slot:hover {
+    .time-slot:hover:not(.unavailable) {
         border-color: var(--primary-color);
-        background: var(--slate-50);
+        background: rgba(255, 107, 0, 0.05);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
 
     .time-slot.selected {
-        background: var(--secondary-color);
-        border-color: var(--secondary-color);
+        background: var(--primary-color);
+        border-color: var(--primary-color);
         color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
     }
 
     .time-slot.selected .instructor-name {
-        color: var(--slate-400);
+        color: white;
+        opacity: 0.9;
     }
 
     .time-slot.unavailable {
@@ -601,16 +1033,62 @@
     }
 
     .fc .fc-button-primary {
-        background: var(--primary-color);
-        border-color: var(--primary-color);
+        background: var(--secondary-color);
+        border-color: var(--secondary-color);
+    }
+
+    .fc .fc-button-primary:hover {
+        background: #1e293b;
+        border-color: #1e293b;
     }
 
     .fc .fc-day-today {
-        background: rgba(52, 152, 219, 0.1) !important;
+        background: rgba(30, 41, 59, 0.08) !important;
+    }
+
+    .fc .fc-daygrid-day:hover {
+        background: rgba(30, 41, 59, 0.05);
+        cursor: pointer;
     }
 
     .fc .fc-daygrid-day.fc-day-has-event {
         cursor: pointer;
+    }
+
+    /* Calendar header styling */
+    .fc .fc-toolbar-title {
+        color: var(--secondary-color);
+        font-weight: 700;
+    }
+
+    .fc .fc-daygrid-day-frame {
+        min-height: 82px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Calendar day numbers */
+    .fc .fc-daygrid-day-number {
+        color: var(--secondary-color);
+        font-weight: 600;
+        float: none;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+    }
+
+    .fc .fc-daygrid-day-top {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Calendar day header (Sun, Mon, etc) */
+    .fc .fc-col-header-cell-cushion {
+        color: var(--secondary-color);
+        font-weight: 700;
     }
 
     @media (max-width: 768px) {
@@ -636,9 +1114,69 @@
 @endsection
 
 @section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
 <script src="https://js.stripe.com/v3/"></script>
 <script>
+window.addEventListener('pageshow', function(event) {
+    // If the page is restored from browser back/forward cache, force fresh CSRF/session state.
+    if (event.persisted) {
+        window.location.reload();
+    }
+});
+
 document.addEventListener('DOMContentLoaded', function() {
+    // Check if service is pre-selected from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const preSelectedService = urlParams.get('service');
+    const sessionPingUrl = '{{ route('session.ping') }}';
+    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+    const createAccountCheck = document.getElementById('createAccountCheck');
+    const accountPasswordFields = document.getElementById('accountPasswordFields');
+    const bookingNoticeModalEl = document.getElementById('bookingNoticeModal');
+    const bookingNoticeTitleEl = document.getElementById('bookingNoticeModalLabel');
+    const bookingNoticeMessageEl = document.getElementById('bookingNoticeModalMessage');
+
+    function showBookingNotice(message, title = 'Action Required') {
+        if (!bookingNoticeModalEl || !bookingNoticeTitleEl || !bookingNoticeMessageEl || typeof bootstrap === 'undefined') {
+            // Fallback only if modal/bootstrap is not available.
+            alert(message);
+            return;
+        }
+        bookingNoticeTitleEl.textContent = title;
+        bookingNoticeMessageEl.textContent = message;
+        const modal = bootstrap.Modal.getOrCreateInstance(bookingNoticeModalEl);
+        modal.show();
+    }
+
+    function toggleAccountPasswordFields() {
+        if (!createAccountCheck || !accountPasswordFields) {
+            return;
+        }
+        if (createAccountCheck.checked) {
+            accountPasswordFields.classList.remove('d-none');
+        } else {
+            accountPasswordFields.classList.add('d-none');
+        }
+    }
+
+    function scrollToTimeSlots() {
+        const timeSlotsContainer = document.getElementById('timeSlotsContainer');
+        if (!timeSlotsContainer) {
+            return;
+        }
+
+        const y = timeSlotsContainer.getBoundingClientRect().top + window.pageYOffset - 110;
+        window.scrollTo({
+            top: Math.max(y, 0),
+            behavior: 'smooth'
+        });
+    }
+
+    if (createAccountCheck && accountPasswordFields) {
+        toggleAccountPasswordFields();
+        createAccountCheck.addEventListener('change', toggleAccountPasswordFields);
+    }
+    
     // Initialize Stripe
     const stripe = Stripe('{{ config("services.stripe.key") }}');
     const elements = stripe.elements();
@@ -663,6 +1201,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const steps = document.querySelectorAll('.booking-step');
     const stepIndicators = document.querySelectorAll('.booking-steps .step');
     let currentStep = 1;
+    
+    // If service is pre-selected, auto-advance to step 2
+    if (preSelectedService) {
+        setTimeout(function() {
+            goToStep(2);
+        }, 300);
+    }
 
     document.querySelectorAll('.next-step').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -706,13 +1251,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const serviceSelected = document.querySelector('input[name="service_id"]:checked') || 
                                    document.querySelector('input[name="package_id"]:checked');
             if (!serviceSelected) {
-                alert('Please select a service or package');
+                showBookingNotice('Please select a service or package.');
                 return false;
             }
         }
         if (step === 2) {
-            if (!document.getElementById('selectedSlotId').value && !document.getElementById('selectedDate').value) {
-                alert('Please select a date and time');
+            if (!document.getElementById('selectedSlotId').value) {
+                showBookingNotice('Please select an available time slot.');
                 return false;
             }
         }
@@ -720,7 +1265,24 @@ document.addEventListener('DOMContentLoaded', function() {
             const required = ['first_name', 'last_name', 'email', 'phone'];
             for (let field of required) {
                 if (!document.querySelector(`input[name="${field}"]`).value) {
-                    alert('Please fill in all required fields');
+                    showBookingNotice('Please fill in all required fields.');
+                    return false;
+                }
+            }
+
+            if (createAccountCheck && createAccountCheck.checked) {
+                const passwordInput = document.querySelector('input[name="account_password"]');
+                const passwordConfirmInput = document.querySelector('input[name="account_password_confirmation"]');
+
+                if (!passwordInput.value || passwordInput.value.length < 8) {
+                    showBookingNotice('Please enter an account password with at least 8 characters.');
+                    passwordInput.focus();
+                    return false;
+                }
+
+                if (passwordInput.value !== passwordConfirmInput.value) {
+                    showBookingNotice('Password confirmation does not match.');
+                    passwordConfirmInput.focus();
                     return false;
                 }
             }
@@ -767,40 +1329,50 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     calendar.render();
 
-    // Instructor Select Listener
-    document.getElementById('instructorSelect').addEventListener('change', function() {
-        const selectedDate = document.getElementById('selectedDate').value;
-        if (selectedDate) {
-            loadTimeSlots(selectedDate);
-        }
-    });
-
     // Load time slots for selected date
     function loadTimeSlots(date) {
-        const locationId = document.getElementById('locationSelect').value;
         const serviceId = document.querySelector('input[name="service_id"]:checked')?.value;
-        const instructorId = document.getElementById('instructorSelect').value;
+
+        console.log('Loading slots for:', { date, serviceId });
+
+        if (!serviceId) {
+            showBookingNotice('Please select a service first.');
+            return;
+        }
+
+        // Reset previous selection before loading slots for a new date.
+        document.getElementById('selectedSlotId').value = '';
+        document.getElementById('selectedTime').value = '';
 
         document.getElementById('selectedDate').value = date;
         document.getElementById('timeSlotsContainer').classList.remove('d-none');
         document.getElementById('timeSlots').innerHTML = '<div class="text-center py-3"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+        scrollToTimeSlots();
 
-        fetch(`{{ url('book-online/slots') }}?date=${date}&location_id=${locationId}&service_id=${serviceId}&instructor_id=${instructorId}`)
-            .then(response => response.json())
+        const url = `{{ url('book-online/slots') }}?date=${date}&service_id=${serviceId}`;
+        console.log('Fetching from:', url);
+
+        fetch(url)
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
             .then(data => {
+                console.log('Received data:', data);
                 let html = '';
                 if (data.slots && data.slots.length > 0) {
                     data.slots.forEach(slot => {
                         const isAvailable = slot.is_available !== false;
-                        const photoHtml = slot.instructor_photo ? `<img src="${slot.instructor_photo}" class="instructor-img" alt="${slot.instructor_name}">` : '';
                         html += `<div class="time-slot ${isAvailable ? '' : 'unavailable'}" 
                                      data-slot-id="${slot.id}" 
                                      data-time="${slot.start_time}"
                                      data-instructor="${slot.instructor_name}"
+                                     data-location="${slot.location_name}"
+                                     data-location-id="${slot.location_id || ''}"
+                                     data-instructor-id="${slot.instructor_id || ''}"
                                      ${isAvailable ? '' : 'title="Not available"'}>
-                                    ${photoHtml}
-                                    <div class="slot-time">${slot.start_time}</div>
-                                    <div class="instructor-name text-truncate w-100 px-1">${slot.instructor_name}</div>
+                                    <div class="slot-time fw-bold">${slot.start_time}</div>
+                                    <div class="instructor-name text-muted small">${slot.instructor_name}</div>
                                 </div>`;
                     });
                 } else {
@@ -809,18 +1381,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('timeSlots').innerHTML = html;
 
                 // Add click handlers for time slots
-                document.querySelectorAll('.time-slot:not(.unavailable)').forEach(slot => {
+                const availableSlotEls = Array.from(document.querySelectorAll('.time-slot:not(.unavailable)'));
+                availableSlotEls.forEach(slot => {
                     slot.addEventListener('click', function() {
                         document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
                         this.classList.add('selected');
                         document.getElementById('selectedSlotId').value = this.dataset.slotId;
                         document.getElementById('selectedTime').value = this.dataset.time;
-                        // Store instructor name directly on the element dataset if needed
+                        
+                        // Auto-fill location and instructor IDs and names from the selected slot
+                        if (this.dataset.locationId) {
+                            document.getElementById('locationSelect').value = this.dataset.locationId;
+                            document.getElementById('locationName').value = this.dataset.location;
+                        }
+                        if (this.dataset.instructorId) {
+                            document.getElementById('instructorSelect').value = this.dataset.instructorId;
+                            document.getElementById('instructorName').value = this.dataset.instructor;
+                        }
                     });
                 });
+
+                // If only one slot is available, auto-select it.
+                if (availableSlotEls.length === 1) {
+                    availableSlotEls[0].click();
+                }
             })
             .catch(error => {
-                document.getElementById('timeSlots').innerHTML = '<div class="col-12 text-center text-danger py-3">Error loading slots</div>';
+                console.error('Error loading slots:', error);
+                document.getElementById('timeSlots').innerHTML = '<div class="col-12 text-center text-danger py-3">Error loading slots. Please try again.</div>';
             });
     }
 
@@ -828,9 +1416,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateSummary() {
         const serviceEl = document.querySelector('input[name="service_id"]:checked');
         const packageEl = document.querySelector('input[name="package_id"]:checked');
-        const locationEl = document.getElementById('locationSelect');
-        const instructorEl = document.getElementById('instructorSelect');
-        const slotEl = document.querySelector('.time-slot.selected');
+        const locationName = document.getElementById('locationName').value;
+        const instructorName = document.getElementById('instructorName').value;
 
         if (serviceEl) {
             document.getElementById('summaryService').textContent = serviceEl.closest('.service-option-item').querySelector('h6').textContent;
@@ -842,22 +1429,38 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.getElementById('summaryDate').textContent = document.getElementById('selectedDate').value || '-';
         document.getElementById('summaryTime').textContent = document.getElementById('selectedTime').value || '-';
-        document.getElementById('summaryLocation').textContent = locationEl.options[locationEl.selectedIndex]?.text || '-';
-        document.getElementById('summaryInstructor').textContent = instructorEl.options[instructorEl.selectedIndex]?.text || 'Any Instructor';
-        
-        if (slotEl && slotEl.dataset.instructor) {
-             // If we picked a specific slot with a known instructor, maybe update summary to show THAT instructor instead of "Any"?
-             // But for now, let's just show what was selected in dropdown.
-             if (instructorEl.value === "") {
-                 document.getElementById('summaryInstructor').textContent = slotEl.dataset.instructor;
-             }
-        }
+        document.getElementById('summaryLocation').textContent = locationName || '-';
+        document.getElementById('summaryInstructor').textContent = instructorName || '-';
     }
 
     // Form Submission with Stripe
     const form = document.getElementById('bookingForm');
+    const csrfInput = form.querySelector('input[name="_token"]');
+
+    async function keepSessionAlive() {
+        try {
+            await fetch(sessionPingUrl, {
+                method: 'GET',
+                credentials: 'same-origin',
+                cache: 'no-store',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+        } catch (e) {
+            // Silent fail: submit flow still proceeds, this is best-effort.
+        }
+    }
+
+    // Keep session active while user is completing long multi-step booking/payment.
+    setInterval(keepSessionAlive, 5 * 60 * 1000);
+
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
+
+        if (csrfInput && csrfMeta) {
+            csrfInput.value = csrfMeta.getAttribute('content');
+        }
+
+        await keepSessionAlive();
 
         const submitBtn = document.getElementById('submitBtn');
         submitBtn.disabled = true;

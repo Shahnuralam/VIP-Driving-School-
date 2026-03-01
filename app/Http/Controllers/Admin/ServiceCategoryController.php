@@ -86,14 +86,19 @@ class ServiceCategoryController extends Controller
 
     public function destroy(ServiceCategory $serviceCategory)
     {
-        if ($serviceCategory->services()->count() > 0) {
+        try {
+            // Check if category has services
+            if ($serviceCategory->services()->count() > 0) {
+                return back()->with('error', 'Cannot delete category with associated services. Please delete or reassign the services first.');
+            }
+
+            $serviceCategory->delete();
+
             return redirect()->route('admin.service-categories.index')
-                ->with('error', 'Cannot delete category with associated services.');
+                ->with('success', 'Service category deleted successfully.');
+        } catch (\Exception $e) {
+            \Log::error('Error deleting service category: ' . $e->getMessage());
+            return back()->with('error', 'Error deleting category: ' . $e->getMessage());
         }
-
-        $serviceCategory->delete();
-
-        return redirect()->route('admin.service-categories.index')
-            ->with('success', 'Service category deleted successfully.');
     }
 }

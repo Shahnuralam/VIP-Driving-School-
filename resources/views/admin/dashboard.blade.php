@@ -74,6 +74,42 @@
 </div>
 
 <div class="row">
+    <!-- Total Appointments -->
+    <div class="col-lg-6 col-12">
+        <div class="small-box bg-primary">
+            <div class="inner">
+                <h3>{{ number_format($totalAppointments) }}</h3>
+                <p class="mb-0">Total Appointments</p>
+                <small class="text-white-50">All time bookings</small>
+            </div>
+            <div class="icon">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <a href="{{ route('admin.bookings.index') }}" class="small-box-footer">
+                View appointments <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Total Revenue -->
+    <div class="col-lg-6 col-12">
+        <div class="small-box bg-gradient-success">
+            <div class="inner">
+                <h3>${{ number_format($totalRevenue, 0) }}</h3>
+                <p class="mb-0">Total Revenue</p>
+                <small class="text-white-50">All time paid revenue</small>
+            </div>
+            <div class="icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <a href="{{ route('admin.bookings.index', ['payment_status' => 'paid']) }}" class="small-box-footer">
+                View paid bookings <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
     <!-- Monthly Stats -->
     <div class="col-md-8">
         <div class="card">

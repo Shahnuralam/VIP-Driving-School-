@@ -81,4 +81,22 @@ class Location extends Model
 
         return implode(', ', $this->available_days);
     }
+
+    /**
+     * Get the full URL for the location image
+     */
+    public function getImageUrlAttribute(): ?string
+    {
+        if (!$this->image) {
+            return null;
+        }
+
+        // If it's already a full URL, return it
+        if (filter_var($this->image, FILTER_VALIDATE_URL)) {
+            return $this->image;
+        }
+
+        // Otherwise, prepend storage path
+        return asset('storage/' . $this->image);
+    }
 }

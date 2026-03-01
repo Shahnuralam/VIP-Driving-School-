@@ -25,28 +25,40 @@
 </section>
 
 <!-- Stats Bar -->
-<div class="bg-white py-5 border-bottom">
+<div class="bg-light py-5">
     <div class="container">
-        <div class="row g-4 text-center">
+        <div class="row g-4">
             <div class="col-md-4" data-aos="fade-up">
-                <div class="px-4">
-                    <div class="text-primary mb-2"><i class="fas fa-user-check fa-2x"></i></div>
-                    <h5 class="fw-800 mb-1">Certified Instructors</h5>
-                    <p class="text-muted small mb-0">Accredited by the Tasmanian Government</p>
+                <div class="stats-card">
+                    <div class="stats-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-700 mb-2">Certified Instructors & Assessors</h5>
+                        <p class="text-muted small mb-0">Accredited by the Tasmanian Government</p>
+                    </div>
                 </div>
             </div>
             <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-                <div class="px-4">
-                    <div class="text-primary mb-2"><i class="fas fa-heart fa-2x"></i></div>
-                    <h5 class="fw-800 mb-1">Nervous Driver Specialists</h5>
-                    <p class="text-muted small mb-0">Patient, supportive approach for anxious learners</p>
+                <div class="stats-card">
+                    <div class="stats-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-700 mb-2">Nervous Driver Specialists</h5>
+                        <p class="text-muted small mb-0">Patient, supportive approach for anxious learners</p>
+                    </div>
                 </div>
             </div>
             <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                <div class="px-4">
-                    <div class="text-primary mb-2"><i class="fas fa-star fa-2x"></i></div>
-                    <h5 class="fw-800 mb-1">5/5 Customer Rating</h5>
-                    <p class="text-muted small mb-0">Consistently rated 5 stars on Facebook</p>
+                <div class="stats-card">
+                    <div class="stats-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-700 mb-2">5/5 Customer Rating</h5>
+                        <p class="text-muted small mb-0">Consistently rated 5 stars on Facebook</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -54,7 +66,7 @@
 </div>
 
 <!-- Why Choose Us -->
-<section class="section-padding bg-light">
+<section class="section-padding" style="background: white;">
     <div class="container">
         <div class="text-center mb-5">
             <h2 class="section-title" data-aos="fade-up">Why Choose VIP Driving School?</h2>
@@ -104,46 +116,65 @@
 </section>
 
 <!-- Services Section -->
-<section class="section-padding bg-slate-50">
+<section class="section-padding" style="background: #f8f9fa;">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="section-tag" data-aos="fade-up">Our Services</span>
+            <span class="section-tag" data-aos="fade-up" style="color: var(--primary-color); text-transform: uppercase; font-weight: 700; letter-spacing: 1.5px; font-size: 0.8rem;">OUR SERVICES</span>
             <h2 class="section-title" data-aos="fade-up" data-aos-delay="100">Choose Your Path</h2>
             <p class="section-subtitle" data-aos="fade-up" data-aos-delay="200">Comprehensive driving education tailored to your needs.</p>
         </div>
-        <div class="row g-4 justify-content-center">
+        <div class="row g-4 justify-content-center align-items-stretch">
             @foreach($categories as $category)
             @php
-                $isFeatured = str_contains(strtolower($category->name), 'package');
+                $categorySlug = strtolower($category->slug ?? '');
+                $isP1Category = str_contains($categorySlug, 'p1');
+                $isPackageCategory = str_contains($categorySlug, 'package');
+                $isDrivingLessonsCategory = str_contains($categorySlug, 'driving-lessons');
+
+                // Dynamic card emphasis based on category type (no fixed index assumptions).
+                $isFeatured = $isPackageCategory || $isP1Category;
+                // Most popular badge is dynamic from real booking volume.
+                $isMostPopular = !empty($mostPopularCategoryId) && (int) $category->id === (int) $mostPopularCategoryId;
+                if ($isP1Category) {
+                    $cardCtaRoute = route('p1-assessments');
+                    $cardCtaLabel = 'View P1 Assessments';
+                } elseif ($isPackageCategory) {
+                    $cardCtaRoute = route('lesson-packages');
+                    $cardCtaLabel = 'View Packages';
+                } elseif ($isDrivingLessonsCategory) {
+                    $cardCtaRoute = route('lesson-packages');
+                    $cardCtaLabel = 'View Lessons';
+                } else {
+                    $cardCtaRoute = route('book-online');
+                    $cardCtaLabel = 'Book Now';
+                }
             @endphp
             <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
-                <div class="service-card {{ $isFeatured ? 'dark featured' : '' }}">
-                    @if($isFeatured)
-                        <span class="featured-badge">Most Popular</span>
+                <div class="service-card-new h-100">
+                    {{--
+                    @if($isMostPopular)
+                        <span class="featured-badge-new">Most Popular</span>
                     @endif
-                    <div class="p-5">
-                        <div class="mb-4">
-                            <i class="{{ $category->icon ?? ($isFeatured ? 'fas fa-box-open' : 'fas fa-car') }} fa-2x text-primary p-3 rounded-3" style="background: rgba(245, 158, 11, 0.1);"></i>
-                        </div>
-                        <h3 class="fw-800 mb-3 h4">{{ $category->name }}</h3>
-                        
-                        @if($isFeatured)
-                            <div class="mb-3">
-                                <span class="text-primary fw-bold">From $235</span>
-                            </div>
-                        @else
-                            <div class="mb-3">
-                                <span class="fw-bold" style="color: var(--primary-color);">$80</span>
-                            </div>
-                        @endif
-
-                        <p class="text-muted mb-4" style="font-size: 0.95rem;">{{ $category->description ?? 'Professional ' . strtolower($category->name) . ' services to help you succeed.' }}</p>
-                        
-                        <a href="{{ route('book-online') }}" class="btn {{ $isFeatured ? 'btn-primary w-100' : 'btn-link p-0 text-decoration-none fw-bold' }}" style="{{ !$isFeatured ? 'color: var(--secondary-color);' : '' }}">
-                            {{ $isFeatured ? 'View Packages' : 'Book Now' }} 
-                            <i class="fas fa-arrow-right ms-2 small"></i>
-                        </a>
+                    --}}
+                    <div class="service-icon-wrapper">
+                        <i class="{{ $category->icon ?? ($isP1Category ? 'fas fa-clipboard-check' : ($isPackageCategory ? 'fas fa-box-open' : 'fas fa-car')) }}"></i>
                     </div>
+                    <h3 class="service-title">{{ $category->name }}</h3>
+                    
+                    <div class="service-price">
+                        @if($isFeatured)
+                            <span>From $235</span>
+                        @else
+                            <span>${{ $category->price ?? '80' }}</span>
+                        @endif
+                    </div>
+
+                    <p class="service-description">{{ $category->description ?? 'Professional ' . strtolower($category->name) . ' services to help you succeed.' }}</p>
+                    
+                    <a href="{{ $cardCtaRoute }}" class="service-btn btn-regular">
+                        {{ $cardCtaLabel }} 
+                        <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
                 </div>
             </div>
             @endforeach
