@@ -84,8 +84,22 @@ class LocationController extends Controller
             $validated['slug'] = Str::slug($validated['name']);
         }
 
+        // Only update image if a new one is uploaded
         if ($request->hasFile('image')) {
+            \Log::info('New image uploaded for location: ' . $location->name);
+            
+            // Delete old image if exists
+            if ($location->image && \Storage::disk('public')->exists($location->image)) {
+                \Storage::disk('public')->delete($location->image);
+                \Log::info('Old image deleted: ' . $location->image);
+            }
+            
             $validated['image'] = $request->file('image')->store('locations', 'public');
+            \Log::info('New image saved: ' . $validated['image']);
+        } else {
+            // Keep the existing image
+            unset($validated['image']);
+            \Log::info('No new image uploaded, keeping existing: ' . $location->image);
         }
 
         $validated['is_active'] = $request->has('is_active');

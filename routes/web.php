@@ -36,6 +36,8 @@ Route::get('/', [HomeController::class, 'index'])->name('frontend.home');
 
 // Lesson Packages
 Route::get('/lesson-packages', [PackageController::class, 'index'])->name('lesson-packages');
+Route::get('/packages/checkout', [PackageController::class, 'checkout'])->name('packages.checkout')->middleware('auth:customer');
+Route::post('/packages/purchase', [PackageController::class, 'purchase'])->name('packages.purchase')->middleware('auth:customer');
 
 // P1 Assessments
 Route::get('/p1-assessments', [AssessmentController::class, 'index'])->name('p1-assessments');
@@ -45,6 +47,10 @@ Route::get('/book-online', [BookingController::class, 'index'])->name('book-onli
 Route::get('/book-online/slots', [BookingController::class, 'getSlots'])->name('book-online.slots');
 Route::post('/book-online', [BookingController::class, 'store'])->name('book-online.store');
 Route::get('/booking/confirmation/{reference}', [BookingController::class, 'confirmation'])->name('booking.confirmation');
+Route::get('/session/ping', function () {
+    session()->put('last_ping', now()->timestamp);
+    return response()->noContent();
+})->name('session.ping');
 
 // Contact
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');

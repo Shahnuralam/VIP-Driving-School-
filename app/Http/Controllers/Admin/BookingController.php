@@ -183,6 +183,40 @@ class BookingController extends Controller
             ->with('success', 'Booking deleted successfully.');
     }
 
+    public function bulkDestroy(Request $request)
+    {
+        $validated = $request->validate([
+            'booking_ids' => 'required|array|min:1',
+            'booking_ids.*' => 'integer|exists:bookings,id',
+        ]);
+
+        $selectedIds = collect($validated['booking_ids'])->unique()->values();
+
+        $deletableIds = Booking::whereIn('id', $selectedIds)
+            ->where('status', 'cancelled')
+            ->pluck('id');
+
+        $deletedCount = 0;
+        if ($deletableIds->isNotEmpty()) {
+            $deletedCount = Booking::whereIn('id', $deletableIds)->delete();
+        }
+
+        $skippedCount = $selectedIds->count() - $deletableIds->count();
+
+        if ($deletedCount > 0 && $skippedCount === 0) {
+            return redirect()->route('admin.bookings.index')
+                ->with('success', "{$deletedCount} appointment(s) deleted successfully.");
+        }
+
+        if ($deletedCount > 0 && $skippedCount > 0) {
+            return redirect()->route('admin.bookings.index')
+                ->with('warning', "{$deletedCount} appointment(s) deleted. {$skippedCount} skipped (only cancelled appointments can be deleted).");
+        }
+
+        return redirect()->route('admin.bookings.index')
+            ->with('error', 'No appointments were deleted. Only cancelled appointments can be deleted.');
+    }
+
     public function export(Request $request)
     {
         $query = Booking::with(['service', 'package', 'location']);

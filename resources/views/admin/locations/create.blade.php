@@ -115,10 +115,14 @@
 
                     <div class="form-group">
                         <label for="image">Location Image</label>
-                        <input type="file" name="image" id="image" class="form-control-file @error('image') is-invalid @enderror">
-                        @error('image')
-                            <span class="invalid-feedback">{{ $message }}</span>
-                        @enderror
+                        <div class="custom-file">
+                            <input type="file" name="image" id="image" class="custom-file-input @error('image') is-invalid @enderror" accept="image/*">
+                            <label class="custom-file-label" for="image">Choose file</label>
+                            @error('image')
+                                <span class="invalid-feedback d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <small class="form-text text-muted">Accepted formats: JPG, PNG, GIF (Max: 2MB)</small>
                     </div>
 
                     <div class="form-group">
@@ -148,4 +152,16 @@
         </div>
     </form>
 </div>
+@stop
+
+
+@section('js')
+<script>
+// Show selected filename in custom file input
+document.querySelector('.custom-file-input').addEventListener('change', function(e) {
+    var fileName = e.target.files[0]?.name || 'Choose file';
+    var label = e.target.nextElementSibling;
+    label.textContent = fileName;
+});
+</script>
 @stop

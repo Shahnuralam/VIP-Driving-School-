@@ -9,6 +9,7 @@
         $contactEmail = $siteSettings['contact_email'] ?? ($siteSettings['email'] ?? 'info@vipdrivingschool.com.au');
         $contactAddress = $siteSettings['business_address'] ?? ($siteSettings['address'] ?? 'Hobart, Tasmania');
         $brandParts = explode(' ', trim($siteName), 2);
+        $brandBadgeTextColor = random_int(0, 1) ? '#ffffff' : '#0f172a';
     @endphp
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,7 +30,7 @@
     <!-- FullCalendar CSS -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
     
-    <style>
+    <style data-version="<?php echo time(); ?>">
         :root {
             --primary-color: #f59e0b; /* Orange-500 from Tailwind/Reference */
             --secondary-color: #0f172a; /* Slate-900 (Deep Navy) */
@@ -107,10 +108,28 @@
             color: white !important;
             letter-spacing: -0.5px;
             text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .navbar-brand span {
+        .navbar-brand .brand-text {
             color: var(--primary-color);
+        }
+
+        .navbar-brand .brand-badge {
+            width: 2.4rem;
+            height: 2.4rem;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: var(--brand-badge-text, #ffffff);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            line-height: 1;
+            font-weight: 800;
+            flex-shrink: 0;
         }
         
         .nav-link {
@@ -128,13 +147,18 @@
         .btn-book {
             background: var(--primary-color);
             color: var(--secondary-color) !important;
-            border: none;
+            border: 2px solid transparent;
             padding: 0.8rem 1.75rem;
             border-radius: 8px;
             font-weight: 700;
             font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.1;
+            vertical-align: middle;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
@@ -153,6 +177,11 @@
             border-radius: 8px;
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(5px);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.1;
+            vertical-align: middle;
             transition: all 0.3s ease;
         }
 
@@ -196,7 +225,7 @@
         
         /* Section Styles */
         .section-padding {
-            padding: 100px 0;
+            padding: 40px 0;
         }
 
         .bg-light {
@@ -228,6 +257,287 @@
             margin: 0 auto 4rem;
         }
         
+        /* Service Cards - New Design */
+        .service-card-new {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem 2.5rem;
+            text-align: center;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 2px 8px 0 rgb(0 0 0 / 0.06);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .service-card-new:hover {
+            box-shadow: 0 8px 24px 0 rgb(0 0 0 / 0.12);
+            transform: translateY(-6px);
+            border-color: var(--primary-color);
+        }
+
+        .service-card-new:hover .service-icon-wrapper {
+            background: rgba(245, 158, 11, 0.2);
+            transform: scale(1.05);
+        }
+
+        .service-card-new.featured-dark {
+            background: linear-gradient(135deg, #1a1f2e 0%, #0f172a 100%);
+            border-color: #2d3748;
+            box-shadow: 0 4px 16px 0 rgb(0 0 0 / 0.2);
+        }
+
+        .service-card-new.featured-dark:hover {
+            box-shadow: 0 12px 32px 0 rgb(0 0 0 / 0.3);
+            transform: translateY(-8px);
+        }
+
+        .featured-badge-new {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .service-icon-wrapper {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            background: rgba(245, 158, 11, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .service-card-new.featured-dark .service-icon-wrapper {
+            background: rgba(245, 158, 11, 0.15);
+        }
+
+        .service-icon-wrapper i {
+            font-size: 1.75rem;
+            color: var(--primary-color);
+        }
+
+        .service-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .service-card-new.featured-dark .service-title {
+            color: white;
+        }
+
+        .service-price {
+            margin-bottom: 1.25rem;
+        }
+
+        .service-price span {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--primary-color);
+        }
+
+        .service-card-new.featured-dark .service-price span {
+            color: var(--primary-color);
+        }
+
+        .service-description {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--slate-600);
+            margin-bottom: 2rem;
+            flex-grow: 1;
+        }
+
+        .service-card-new.featured-dark .service-description {
+            color: var(--slate-400);
+        }
+
+        .service-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .service-btn.btn-featured {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            padding: 0.9rem 2rem;
+            border-radius: 10px;
+            width: 100%;
+        }
+
+        .service-btn.btn-featured:hover {
+            background: #ffa726;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .service-btn.btn-regular {
+            color: var(--primary-color);
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .service-btn.btn-regular::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .service-btn.btn-regular:hover {
+            color: #ffa726;
+        }
+
+        .service-btn.btn-regular:hover::after {
+            width: 100%;
+        }
+
+        .service-btn.btn-regular:hover i {
+            transform: translateX(4px);
+        }
+
+        .service-btn.btn-regular i {
+            transition: transform 0.3s ease;
+        }
+
+        /* Package Features List */
+        .package-features-list {
+            padding-left: 0;
+            text-align: left;
+        }
+
+        .package-features-list li {
+            color: var(--slate-600);
+            font-size: 0.9rem;
+        }
+
+        .service-card-new.featured-dark .package-features-list li {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .service-card-new.featured-dark .package-features-list li span {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .package-check-icon {
+            color: var(--primary-color);
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .service-card-new.featured-dark .package-check-icon {
+            color: var(--primary-color) !important;
+        }
+
+        /* Package Tagline */
+        .package-tagline {
+            background: rgba(245, 158, 11, 0.12);
+            color: var(--primary-color);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .service-card-new.featured-dark .package-tagline {
+            background: rgba(245, 158, 11, 0.25);
+            color: var(--primary-color);
+        }
+
+        /* Package Lesson Info */
+        .package-lesson-info {
+            color: var(--slate-500);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .service-card-new.featured-dark .package-lesson-info {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Package Savings */
+        .package-savings {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .original-price {
+            color: var(--slate-400);
+            text-decoration: line-through;
+            font-size: 0.95rem;
+        }
+
+        .service-card-new.featured-dark .original-price {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .save-badge {
+            background: rgba(34, 197, 94, 0.12);
+            color: #16a34a;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .service-card-new.featured-dark .save-badge {
+            background: rgba(34, 197, 94, 0.25);
+            color: #4ade80;
+        }
+
+        /* Regular Package Button */
+        .service-btn.btn-regular-package {
+            color: var(--primary-color);
+            padding: 0.75rem 2rem;
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            background: transparent;
+            font-weight: 700;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .service-btn.btn-regular-package:hover {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .service-btn.btn-regular-package i {
+            transition: transform 0.3s ease;
+        }
+
+        .service-btn.btn-regular-package:hover i {
+            transform: translateX(4px);
+        }
+
         /* Cards */
         .service-card, .package-card, .location-card {
             background: white;
@@ -291,6 +601,57 @@
             color: #666;
         }
         
+        /* Stats Cards */
+        .stats-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1rem;
+            box-shadow: 0 2px 8px 0 rgb(0 0 0 / 0.06);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            transition: all 0.3s ease;
+            height: 100%;
+            min-height: 200px;
+        }
+
+        .stats-card:hover {
+            box-shadow: 0 8px 20px 0 rgb(0 0 0 / 0.1);
+            transform: translateY(-4px);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .stats-icon {
+            flex-shrink: 0;
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            background: rgba(245, 158, 11, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-card h5 {
+            font-size: 1.1rem;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            line-height: 1.4;
+        }
+
+        .stats-card p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--slate-500);
+        }
+
         /* Info Cards */
         .info-card {
             background: white;
@@ -429,14 +790,14 @@
             background-size: cover;
             background-position: center;
             color: white;
-            padding: 160px 0 80px;
+            padding: 120px 0 52px;
             text-align: center;
         }
         
         .page-header h1 {
-            font-size: 3rem;
+            font-size: clamp(2.1rem, 5vw, 2.8rem);
             font-weight: 800;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             letter-spacing: -1px;
         }
         
@@ -477,15 +838,19 @@
             }
             
             .section-padding {
-                padding: 50px 0;
+                padding: 40px 0;
             }
             
             .page-header {
-                padding: 100px 0 40px;
+                padding: 92px 0 36px;
             }
             
             .page-header h1 {
                 font-size: 1.75rem;
+            }
+
+            .stats-card {
+                min-height: 180px;
             }
         }
     </style>
@@ -497,7 +862,10 @@
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
             <a class="navbar-brand" href="{{ route('frontend.home') }}">
-                {{ $brandParts[0] }} <span>{{ $brandParts[1] ?? '' }}</span>
+                <span class="brand-badge" style="--brand-badge-text: {{ $brandBadgeTextColor }};">{{ $brandParts[0] }}</span>
+                @if(!empty($brandParts[1]))
+                    <span class="brand-text">{{ $brandParts[1] }}</span>
+                @endif
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>

@@ -26,8 +26,8 @@
                 <div class="mb-5" data-aos="fade-up">
                     <span class="section-tag">Information</span>
                     <h2 class="fw-800 mb-4">About P1 Driver Assessments</h2>
-                    <p class="lead text-muted">Our P1 Driver Assessment is designed to help you gain your provisional licence. We offer assessments at multiple locations across Tasmania.</p>
-                    <p class="text-muted">The assessment evaluates your ability to drive safely and independently in a variety of road and traffic conditions. Our experienced assessors will guide you through the process and provide feedback on your driving skills.</p>
+                    <p class="text-muted">You can book online within our Bookings Calendar once you register your account during the Check-out process.</p>
+                    <p class="text-muted"><strong>Please note:</strong> VIP Driving School separates our Instructors and Assessors, allowing you to book a P Assessment and have lessons with us which provides you a seamless experience throughout your journey to obtain your licence. If you have had a lesson within 6 months, you may not use the same Instructor/Assessor to conduct your P1 Assessment.</p>
                 </div>
 
                 <!-- Assessment Locations -->
@@ -39,18 +39,26 @@
                         @forelse($locations as $location)
                         <div class="col-md-6">
                             <div class="location-card h-100 border">
+                                @if($location->image)
+                                <div class="location-image">
+                                    <img src="{{ Storage::url($location->image) }}" alt="{{ $location->name }}" class="w-100">
+                                </div>
+                                @endif
                                 <div class="p-4">
                                     <h5 class="fw-800 mb-3">{{ $location->name }}</h5>
-                                    <div class="d-flex align-items-start gap-2 mb-2 text-muted small">
+                                    <div class="d-flex align-items-start gap-2 mb-3 text-muted small">
                                         <i class="fas fa-map-pin mt-1 text-primary"></i>
                                         <span>{{ $location->address }}</span>
                                     </div>
                                     @if($location->available_days_text)
-                                    <div class="d-flex align-items-center gap-2 mb-2 text-muted small">
+                                    <div class="d-flex align-items-center gap-2 mb-3 text-muted small">
                                         <i class="fas fa-calendar-alt text-primary"></i>
                                         <span>{{ $location->available_days_text }}</span>
                                     </div>
                                     @endif
+                                    <a href="{{ route('book-online') }}?location={{ $location->id }}" class="btn btn-book w-100">
+                                        <i class="fas fa-calendar-check me-2"></i>Book Now
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -64,9 +72,9 @@
                     </div>
                 </div>
 
-                <!-- Assessment Services -->
-                @if($assessmentServices->count() > 0)
-                <div class="mb-5" data-aos="fade-up">
+                <!-- Assessment Services (Hidden) -->
+                @if(false && $assessmentServices->count() > 0)
+                <div class="mb-5" data-aos="fade-up" style="display: none;">
                     <h3 class="mb-4"><i class="fas fa-clipboard-check text-primary me-2"></i>Assessment Services</h3>
                     <div class="row g-4">
                         @foreach($assessmentServices as $service)
@@ -100,51 +108,65 @@
                 <!-- Things to Know -->
                 <div class="sidebar-card mb-4" data-aos="fade-left">
                     <h4><i class="fas fa-lightbulb text-warning me-2"></i>Things to Know</h4>
-                    <ul class="info-list">
-                        <li>
-                            <i class="fas fa-check-circle text-success"></i>
-                            <span>You must hold a valid learner licence for at least 12 months</span>
-                        </li>
-                        <li>
-                            <i class="fas fa-check-circle text-success"></i>
-                            <span>Complete minimum 50 hours of supervised driving (including 10 night hours)</span>
-                        </li>
-                        <li>
-                            <i class="fas fa-check-circle text-success"></i>
-                            <span>Assessment takes approximately 45-60 minutes</span>
-                        </li>
-                        <li>
-                            <i class="fas fa-check-circle text-success"></i>
-                            <span>Arrive at least 15 minutes before your scheduled time</span>
-                        </li>
-                        <li>
-                            <i class="fas fa-check-circle text-success"></i>
-                            <span>You can use our vehicle or bring your own registered vehicle</span>
-                        </li>
-                    </ul>
+                    
+                    <div class="info-section mb-4">
+                        <h6 class="info-heading">Hazard Perception Test</h6>
+                        <p class="info-text">You must complete your Hazard Perception Test prior to booking. We cannot register your P1 Assessment with State Growth without this.</p>
+                        <a href="https://www.platesplus.tas.gov.au/plates-plus/hpt" target="_blank" class="info-link">
+                            <i class="fas fa-external-link-alt me-1"></i>Take the test here
+                        </a>
+                    </div>
+
+                    <div class="info-section mb-4">
+                        <h6 class="info-heading">Log Book Requirements</h6>
+                        <p class="info-text">You must have the required learner hours recorded in your Log Book or Plates Plus Logbook App. Failure to meet this requirement will result in forfeiture of your Assessment and payment.</p>
+                    </div>
+
+                    <div class="info-section mb-4">
+                        <h6 class="info-heading">Assessment Date</h6>
+                        <p class="info-text">Check your Drivers Licence for the Earliest Assessment Date. Booking before this date may result in cancellation fees.</p>
+                    </div>
+
+                    <div class="info-section mb-4">
+                        <h6 class="info-heading">Booking Policy</h6>
+                        <p class="info-text">Please only book one Assessment at a time. Cancelling multiple bookings will incur the full cancellation fee.</p>
+                    </div>
+
+                    <div class="info-section mb-4">
+                        <h6 class="info-heading">Vehicle Requirements</h6>
+                        <p class="info-text">If using your own vehicle, it must meet Tasmania Government guidelines. Our Assessors will inspect it before the Assessment.</p>
+                        <p class="info-text mt-2"><strong>Note:</strong> Our Assessment vehicles are AUTOMATIC only. Manual Assessments require your own vehicle.</p>
+                    </div>
                 </div>
 
                 <!-- Things to Bring -->
                 <div class="sidebar-card mb-4" data-aos="fade-left" data-aos-delay="100">
                     <h4><i class="fas fa-clipboard-list text-primary me-2"></i>Things to Bring</h4>
-                    <ul class="info-list">
+                    <ul class="checklist">
                         <li>
-                            <i class="fas fa-id-card text-primary"></i>
-                            <span>Your current Learner Licence</span>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Current Drivers Licence</span>
                         </li>
                         <li>
-                            <i class="fas fa-book text-primary"></i>
-                            <span>Completed log book (if using one)</span>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Completed Log Book or Plates Plus App</span>
                         </li>
                         <li>
-                            <i class="fas fa-glasses text-primary"></i>
-                            <span>Glasses or contact lenses (if required)</span>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Signed In-Car Camera Consent Form</span>
                         </li>
                         <li>
-                            <i class="fas fa-credit-card text-primary"></i>
-                            <span>Payment for assessment fee</span>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Exemption Form (if applicable)</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Medical Forms (if applicable)</span>
                         </li>
                     </ul>
+                    <a href="#" class="download-link mt-3 d-inline-block">
+                        <i class="fas fa-download me-2"></i>Download Consent Form
+                    </a>
                 </div>
 
                 <!-- Downloadable Documents -->
@@ -226,7 +248,7 @@
     .sidebar-card {
         background: white;
         border-radius: 16px;
-        padding: 2.5rem;
+        padding: 2rem;
         border: 1px solid var(--slate-100);
         box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
     }
@@ -236,6 +258,85 @@
         font-weight: 800;
         margin-bottom: 1.5rem;
         color: var(--secondary-color);
+    }
+
+    .info-section {
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--slate-100);
+    }
+
+    .info-section:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .info-heading {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .info-text {
+        font-size: 0.875rem;
+        color: var(--slate-600);
+        line-height: 1.6;
+        margin-bottom: 0;
+    }
+
+    .info-link {
+        display: inline-block;
+        font-size: 0.875rem;
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 600;
+        margin-top: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .info-link:hover {
+        color: #d65a00;
+        transform: translateX(3px);
+    }
+
+    .checklist {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .checklist li {
+        display: flex;
+        align-items: start;
+        gap: 0.75rem;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--slate-50);
+        font-size: 0.9rem;
+        color: var(--slate-700);
+    }
+
+    .checklist li:last-child {
+        border-bottom: none;
+    }
+
+    .checklist li i {
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        margin-top: 2px;
+        flex-shrink: 0;
+    }
+
+    .download-link {
+        font-size: 0.875rem;
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .download-link:hover {
+        color: #d65a00;
+        transform: translateX(3px);
     }
 
     .info-list li {
@@ -279,11 +380,43 @@
         background: white;
         border-radius: 16px;
         transition: all 0.3s ease;
+        overflow: hidden;
     }
 
     .location-card:hover {
         border-color: var(--primary-color) !important;
         box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+
+    .location-image {
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+        background: var(--slate-100);
+    }
+
+    .location-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .location-card:hover .location-image img {
+        transform: scale(1.05);
+    }
+
+    .location-card .btn-book {
+        transition: all 0.3s ease;
+    }
+
+    .location-card .btn-book:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
+    }
+
+    .info-list li a {
+        word-break: break-all;
     }
 </style>
 @endsection

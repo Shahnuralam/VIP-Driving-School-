@@ -55,9 +55,15 @@
                         <a href="{{ route('frontend.home') }}" class="btn btn-primary py-3 fw-bold">
                             Return Home
                         </a>
-                        <a href="{{ route('customer.dashboard') }}" class="btn btn-outline-slate py-3 fw-bold">
-                            Manage Booking
-                        </a>
+                        @if(auth('customer')->check())
+                            <a href="{{ route('customer.dashboard') }}" class="btn btn-outline-slate py-3 fw-bold">
+                                Open My Dashboard
+                            </a>
+                        @elseif($booking->customer_id)
+                            <a href="{{ route('customer.login') }}" class="btn btn-outline-slate py-3 fw-bold">
+                                Login to Manage Booking
+                            </a>
+                        @endif
                     </div>
                 </div>
             </div>
